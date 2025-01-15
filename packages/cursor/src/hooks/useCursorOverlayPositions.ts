@@ -1,15 +1,14 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
-import {
-  UnknownObject,
-  useIsomorphicLayoutEffect,
-  usePlateEditorRef,
-} from '@udecode/plate-common';
-import { Range } from 'slate';
+import React from 'react';
 
-import { CursorOverlayProps } from '../components/CursorOverlay';
+import type { TRange, UnknownObject } from '@udecode/plate';
+
+import { useEditorRef, useIsomorphicLayoutEffect } from '@udecode/plate/react';
+
+import type { CursorOverlayProps } from '../components/CursorOverlay';
+import type { CursorState, SelectionRect } from '../types';
+
 import { getCursorOverlayState } from '../queries/getCursorOverlayState';
 import { getSelectionRects } from '../queries/getSelectionRects';
-import { CursorState, SelectionRect } from '../types';
 import { useRefreshOnResize } from './useRefreshOnResize';
 
 export const FROZEN_EMPTY_ARRAY = Object.freeze(
@@ -21,17 +20,17 @@ export const useCursorOverlayPositions = <TCursorData extends UnknownObject>({
   cursors: cursorStates,
   refreshOnResize = true,
 }: CursorOverlayProps<TCursorData> = {}) => {
-  const editor = usePlateEditorRef();
+  const editor = useEditorRef();
 
-  const selectionRectCache = useRef<WeakMap<Range, SelectionRect[]>>(
+  const selectionRectCache = React.useRef<WeakMap<TRange, SelectionRect[]>>(
     new WeakMap()
   );
 
-  const [selectionRects, setSelectionRects] = useState<
+  const [selectionRects, setSelectionRects] = React.useState<
     Record<string, SelectionRect[]>
   >({});
 
-  const updateSelectionRects = useCallback(() => {
+  const updateSelectionRects = React.useCallback(() => {
     // We have a container ref but the ref is null => container
     // isn't mounted to we can't calculate the selection rects.
     if (!containerRef?.current) return;
@@ -39,10 +38,12 @@ export const useCursorOverlayPositions = <TCursorData extends UnknownObject>({
 
     let xOffset = 0;
     let yOffset = 0;
+
     if (containerRef) {
       const contentRect = containerRef.current!.getBoundingClientRect();
       xOffset = contentRect.x;
       yOffset = contentRect.y;
+      yOffset -= containerRef.current.scrollTop;
     }
 
     let selectionRectsChanged =
@@ -60,6 +61,7 @@ export const useCursorOverlayPositions = <TCursorData extends UnknownObject>({
       }
 
       const cached = selectionRectCache.current.get(range);
+
       if (cached) {
         return cached;
       }
@@ -91,20 +93,20 @@ export const useCursorOverlayPositions = <TCursorData extends UnknownObject>({
     updateSelectionRects();
   });
 
-  const cursors = useMemo(
+  const cursors = React.useMemo(
     () =>
       getCursorOverlayState({
-        selectionRects,
         cursors: cursorStates,
+        selectionRects,
       }),
     [cursorStates, selectionRects]
   );
 
   const { refresh } = useRefreshOnResize({
     containerRef,
-    selectionRectCache,
     refreshOnResize,
+    selectionRectCache,
   });
 
-  return { refresh, cursors };
+  return { cursors, refresh };
 };

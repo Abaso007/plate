@@ -1,13 +1,15 @@
+'use client';
+
 import React from 'react';
-import { Plate } from '@udecode/plate-common';
+
+import { Plate, PlateContent, usePlateEditor } from '@udecode/plate/react';
 
 export default function BasicEditorDefaultDemo() {
+  const editor = usePlateEditor();
+
   return (
-    // eslint-disable-next-line react/jsx-no-undef
-    <Plate
-      editableProps={{
-        placeholder: 'Type...',
-      }}
-    />
+    <Plate editor={editor}>
+      <PlateContent placeholder="Type..." />
+    </Plate>
   );
 }

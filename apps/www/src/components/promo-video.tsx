@@ -5,8 +5,8 @@ import { AspectRatio } from './ui/aspect-ratio';
 export function PromoVideo() {
   return (
     <AspectRatio
+      className="overflow-hidden rounded-lg border bg-white shadow"
       ratio={16 / 9}
-      className="overflow-hidden rounded-lg border bg-white shadow-xl"
     >
       <video autoPlay muted playsInline>
         <source

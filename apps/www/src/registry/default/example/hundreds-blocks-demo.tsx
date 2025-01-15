@@ -1,28 +1,32 @@
+'use client';
+
 import React, { useCallback, useMemo, useState } from 'react';
-import { editableProps } from '@/plate/demo/editableProps';
-import { basicNodesPlugins } from '@/plate/demo/plugins/basicNodesPlugins';
-import { createHugeDocumentValue } from '@/plate/demo/values/createHugeDocumentValue';
-import { Plate, TElement } from '@udecode/plate-common';
+
+import type { RenderElementProps, TElement, Value } from '@udecode/plate';
+
+import { Editable, Plate, Slate, withReact } from '@udecode/plate/react';
+import { BasicElementsPlugin } from '@udecode/plate-basic-elements/react';
+import { BasicMarksPlugin } from '@udecode/plate-basic-marks/react';
 import { createEditor } from 'slate';
-import {
-  Editable,
-  ReactEditor,
-  RenderElementProps,
-  Slate,
-  withReact,
-} from 'slate-react';
 
-import { MyValue } from '@/types/plate-types';
+import { useCreateEditor } from '@/registry/default/components/editor/use-create-editor';
+import { createHugeDocumentValue } from '@/registry/default/example/values/huge-document-value';
+import { Editor, EditorContainer } from '@/registry/default/plate-ui/editor';
 
-const initialValue = createHugeDocumentValue() as MyValue;
+const value = createHugeDocumentValue();
 
 function WithPlate() {
+  const editor = useCreateEditor({
+    plugins: [BasicElementsPlugin, BasicMarksPlugin],
+    value,
+  });
+
   return (
-    <Plate
-      editableProps={editableProps}
-      initialValue={initialValue}
-      plugins={basicNodesPlugins}
-    />
+    <Plate editor={editor}>
+      <EditorContainer>
+        <Editor spellCheck={false} />
+      </EditorContainer>
+    </Plate>
   );
 }
 
@@ -38,17 +42,18 @@ function Element({ attributes, children, element }: RenderElementProps) {
 }
 
 function WithoutPlate() {
-  const [value, setValue] = useState(initialValue);
-  const renderElement = useCallback((p) => <Element {...p} />, []);
-  const editor = useMemo(() => withReact(createEditor() as ReactEditor), []);
+  const [initialValue, setValue] = useState(value);
+  const renderElement = useCallback((p: any) => <Element {...p} />, []);
+  const editor = useMemo(() => withReact(createEditor()), []);
+  const onChange = useCallback((newValue: Value) => setValue(newValue), []);
 
   return (
     <Slate
+      onChange={onChange as any}
       editor={editor}
-      initialValue={value}
-      onChange={useCallback((v) => setValue(v), [])}
+      initialValue={initialValue}
     >
-      <Editable renderElement={renderElement} {...(editableProps as any)} />
+      <Editable renderElement={renderElement} spellCheck={false} />
     </Slate>
   );
 }
@@ -56,8 +61,14 @@ function WithoutPlate() {
 export default function HundredsBlocksDemo() {
   return (
     <div className="flex">
-      <WithPlate />
-      <WithoutPlate />
+      <div className="w-1/2 p-4">
+        <div className="mb-4 text-lg font-bold">Plate</div>
+        <WithPlate />
+      </div>
+      <div className="w-1/2 p-4">
+        <div className="mb-4 text-lg font-bold">Slate</div>
+        <WithoutPlate />
+      </div>
     </div>
   );
 }

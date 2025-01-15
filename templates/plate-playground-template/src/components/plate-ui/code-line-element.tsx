@@ -1,11 +1,11 @@
 'use client';
 
-import React, { forwardRef } from 'react';
-import { PlateElement, PlateElementProps } from '@udecode/plate-common';
+import React from 'react';
 
-const CodeLineElement = forwardRef<HTMLDivElement, PlateElementProps>(
-  (props, ref) => <PlateElement ref={ref} {...props} />
-);
-CodeLineElement.displayName = 'CodeLineElement';
+import { withRef } from '@udecode/cn';
 
-export { CodeLineElement };
+import { PlateElement } from './plate-element';
+
+export const CodeLineElement = withRef<typeof PlateElement>((props, ref) => (
+  <PlateElement ref={ref} {...props} />
+));

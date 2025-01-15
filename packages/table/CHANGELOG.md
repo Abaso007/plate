@@ -1,5 +1,523 @@
 # @udecode/plate-table
 
+## 42.1.1
+
+### Patch Changes
+
+- [#3974](https://github.com/udecode/plate/pull/3974) by [@felixfeng33](https://github.com/felixfeng33) – Remove useless html parser.
+
+## 42.0.5
+
+### Patch Changes
+
+- [#3943](https://github.com/udecode/plate/pull/3943) by [@felixfeng33](https://github.com/felixfeng33) – Support deserialization from PlateStatic.
+
+## 42.0.0
+
+### Major Changes
+
+- [#3920](https://github.com/udecode/plate/pull/3920) by [@zbeyens](https://github.com/zbeyens) – **Major performance improvement**: all table cells were re-rendering when a single cell changed. This is now fixed.
+
+  - `TablePlugin` now depends on `NodeIdPlugin`.
+  - Table merging is now enabled by default:
+    - Renamed `enableMerging` to `disableMerge`.
+    - **Migration**:
+      - `enableMerging: true` → remove the option.
+      - otherwise → `TablePlugin.configure({ options: { disableMerge: true } })`
+  - Renamed `unmergeTableCells` to `splitTableCell`.
+  - Renamed `editor.api.create.cell` to `editor.api.create.tableCell`.
+  - In `useTableMergeState`, renamed `canUnmerge` to `canSplit`.
+  - `insertTableRow` and `insertTableColumn`: removed `disableSelect` in favor of `select`. **Migration**: replace it with the opposite boolean.
+  - `getTableCellBorders`: params `(element, options)` → `(editor, options)`; removed `isFirstCell` and `isFirstRow`.
+  - Merged `useTableCellElementState` into `useTableCellElement`:
+    - Removed its parameter.
+    - Removed `hovered` and `hoveredLeft` returns (use CSS instead).
+    - Renamed `rowSize` to `minHeight`.
+    - Computes column sizes and returns `width`.
+  - Merged `useTableCellElementResizableState` into `useTableCellElementResizable`:
+    - Removed `onHover` and `onHoverEnd` props (use CSS instead).
+  - Merged `useTableElementState` into `useTableElement`:
+    - Removed its parameter.
+    - No longer computes and returns `colSizes`, `minColumnWidth`, and `colGroupProps`.
+
+### Minor Changes
+
+- [#3920](https://github.com/udecode/plate/pull/3920) by [@zbeyens](https://github.com/zbeyens) –
+
+  - `TablePlugin` new api and transforms:
+
+  ```ts
+  type TableApi = {
+    create: {
+      table: OmitFirst<typeof getEmptyTableNode>;
+      /** Cell node factory used each time a cell is created. */
+      tableCell: OmitFirst<typeof getEmptyCellNode>;
+      tableRow: OmitFirst<typeof getEmptyRowNode>;
+    };
+    table: {
+      getCellBorders: OmitFirst<typeof getTableCellBorders>;
+      getCellSize: OmitFirst<typeof getTableCellSize>;
+      getColSpan: typeof getColSpan;
+      getRowSpan: typeof getRowSpan;
+    };
+  };
+
+  type TableTransforms = {
+    insert: {
+      table: OmitFirst<typeof insertTable>;
+    };
+    remove: {
+      table: OmitFirst<typeof deleteTable>;
+      tableColumn: OmitFirst<typeof deleteColumn>;
+      tableRow: OmitFirst<typeof deleteRow>;
+    };
+    table: {
+      merge: OmitFirst<typeof mergeTableCells>;
+      split: OmitFirst<typeof splitTableCell>;
+    };
+  };
+  ```
+
+  - `insertTableColumn` add `before` option to insert a column before the current column.
+  - `insertTableRow` add `before` option to insert a row before the current row.
+  - `insertTable` now supports inserting a table after the current table.
+
+## 41.0.9
+
+### Patch Changes
+
+- [#3909](https://github.com/udecode/plate/pull/3909) by [@Croc-ye](https://github.com/Croc-ye) – fix: copying form mulitple cells does not retain font attributes
+
+## 41.0.7
+
+### Patch Changes
+
+- [#3908](https://github.com/udecode/plate/pull/3908) by [@Croc-ye](https://github.com/Croc-ye) – fix: exception of inputting Chinese when selecting multiple cells
+
+## 41.0.0
+
+### Major Changes
+
+- [#3830](https://github.com/udecode/plate/pull/3830) by [@felixfeng33](https://github.com/felixfeng33) – Move from `@udecode/plate-table/react` to `@udecode/plate-table`:
+
+  - `deleteColumn`
+  - `deleteColumnWhenExpanded`
+  - `deleteRow`
+  - `deleteRowWhenExpanded`
+  - `getTableColumn`
+  - `getTableGridAbove`
+  - `getTableGridByRange`
+  - `getTableRow`
+  - `insertTable`
+  - `mergeTableCells`
+  - `moveSelectionFromCell`
+  - `overrideSelectionFromCell`
+  - `unmergeTableCells`
+  - `withDeleteTable`
+  - `withGetFragmentlable`
+  - `withInsertFragmentTable`
+  - `withInsertTextTable`
+  - `withMarkTable`
+  - `withSelectionTable`
+  - `withSetFragmentDataTable`
+  - `withTable`
+
+### Patch Changes
+
+- [#3830](https://github.com/udecode/plate/pull/3830) by [@felixfeng33](https://github.com/felixfeng33) – Move `node.props` plugin attributes from `/react` to `/`
+
+- [#3830](https://github.com/udecode/plate/pull/3830) by [@felixfeng33](https://github.com/felixfeng33) – Replace `findNodePath` with `findPath`
+
+## 40.0.0
+
+### Patch Changes
+
+- [#3744](https://github.com/udecode/plate/pull/3744) by [@zbeyens](https://github.com/zbeyens) – Fix: remove tables without any rows
+
+## 39.1.6
+
+## 39.0.1
+
+### Patch Changes
+
+- [`aa3456425606bc7680f51bc64412e3cb5aaabe8a`](https://github.com/udecode/plate/commit/aa3456425606bc7680f51bc64412e3cb5aaabe8a) by [@zbeyens](https://github.com/zbeyens) – fix lodash imports
+
+## 39.0.0
+
+## 38.0.8
+
+### Patch Changes
+
+- [#3550](https://github.com/udecode/plate/pull/3550) by [@oleg-orlov-quantori](https://github.com/oleg-orlov-quantori) – Fix table attributes disappear during copying
+
+## 38.0.6
+
+### Patch Changes
+
+- [`f26ed56053b14e697fea2e6a7e33a73ce28593e4`](https://github.com/udecode/plate/commit/f26ed56053b14e697fea2e6a7e33a73ce28593e4) by [@12joan](https://github.com/12joan) – Add the `colspan` and `rowspan` attributes to `dangerouslyAllowAttributes` for TableCellPlugin and TableCellHeaderPlugin
+
+## 38.0.5
+
+### Patch Changes
+
+- [#3552](https://github.com/udecode/plate/pull/3552) by [@natamox](https://github.com/natamox) – Fix unmerge & compute cell indices
+
+  Remove computeAllCellIndices, use computeCellIndices instead
+
+## 38.0.1
+
+### Patch Changes
+
+- [#3526](https://github.com/udecode/plate/pull/3526) by [@zbeyens](https://github.com/zbeyens) – Prefix base plugin with `Base`
+
+## 38.0.0
+
+## 37.0.0
+
+### Major Changes
+
+- [#3420](https://github.com/udecode/plate/pull/3420) by [@zbeyens](https://github.com/zbeyens) –
+  - `createTablePlugin` -> `TablePlugin`
+  - NEW `TableRowPlugin`, `TableCellPlugin`, `TableCellHeaderPlugin`
+  - Replace `insertTableColumn` with `editor.insert.tableColumn`
+  - Replace `insertTableRow` with `editor.insert.tableRow`
+  - Move `cellFactory` option to `create.cell` api
+  - Move `getCellChildren` option to `table.getCellChildren` api
+
+## 36.5.8
+
+### Patch Changes
+
+- [#3463](https://github.com/udecode/plate/pull/3463) by [@beeant0512](https://github.com/beeant0512) – fixed the judgment logic of deleting the last row of the table
+
+## 36.5.7
+
+### Patch Changes
+
+- [#3461](https://github.com/udecode/plate/pull/3461) by [@beeant0512](https://github.com/beeant0512) – fix delete last row will cause editor crash when `enableMerging: true`
+
+## 36.3.8
+
+### Patch Changes
+
+- [#3406](https://github.com/udecode/plate/pull/3406) by [@beeant0512](https://github.com/beeant0512) – fix: where total or num is a string
+
+## 36.3.5
+
+### Patch Changes
+
+- [#3410](https://github.com/udecode/plate/pull/3410) by [@AHappyAtlas](https://github.com/AHappyAtlas) – Recalculate the split cells after unmerge
+
+## 36.3.1
+
+### Patch Changes
+
+- [#3368](https://github.com/udecode/plate/pull/3368) by [@beeant0512](https://github.com/beeant0512) – fix table column count when first row has merged columns
+
+## 36.2.0
+
+### Patch Changes
+
+- [#3383](https://github.com/udecode/plate/pull/3383) by [@EvanSmith93](https://github.com/EvanSmith93) – Fix table header property and apply header to only the top row of new tables
+
+## 36.0.0
+
+## 35.2.0
+
+### Minor Changes
+
+- [`a115f969d2032af53ea88c6add7d1dfa7cf3610f`](https://github.com/udecode/plate/commit/a115f969d2032af53ea88c6add7d1dfa7cf3610f) – Add `getCellChildren` option to `TablePlugin`
+
+## 35.1.0
+
+### Minor Changes
+
+- [#3313](https://github.com/udecode/plate/pull/3313) by [@zbeyens](https://github.com/zbeyens) –
+  - Add `cellFactory` option to `TablePlugin`, called each time a cell is created. Default is `getEmptyCellNode`
+  - Remove `newCellChildren` option from `TablePlugin`, use `cellFactory` instead
+
+## 34.0.0
+
+## 33.0.7
+
+### Patch Changes
+
+- [#3222](https://github.com/udecode/plate/pull/3222) by [@dimaanj](https://github.com/dimaanj) – fix serializeHtml when overwriteByKey used
+
+## 33.0.2
+
+### Patch Changes
+
+- [#3187](https://github.com/udecode/plate/pull/3187) by [@zbeyens](https://github.com/zbeyens) – Fix types
+
+## 33.0.0
+
+## 32.0.2
+
+### Patch Changes
+
+- [#3172](https://github.com/udecode/plate/pull/3172) by [@KorovinQuantori](https://github.com/KorovinQuantori) – Add computeCellIndices fallback for table insert functions
+
+## 32.0.0
+
+## 31.4.1
+
+### Patch Changes
+
+- [#3138](https://github.com/udecode/plate/pull/3138) by [@felixfeng33](https://github.com/felixfeng33) – Fix: adding marks in a cell is applying to the whole cell
+
+## 31.4.0
+
+### Patch Changes
+
+- [#3118](https://github.com/udecode/plate/pull/3118) by [@felixfeng33](https://github.com/felixfeng33) – Missing exports
+
+## 31.3.3
+
+### Patch Changes
+
+- [#3090](https://github.com/udecode/plate/pull/3090) by [@felixfeng33](https://github.com/felixfeng33) – fix can not remove table column when selection is expanded
+
+## 31.3.2
+
+### Patch Changes
+
+- [#3086](https://github.com/udecode/plate/pull/3086) by [@felixfeng33](https://github.com/felixfeng33) – fix add/removeMark behavior When selection is aboving table.
+
+## 31.3.1
+
+### Patch Changes
+
+- [#3037](https://github.com/udecode/plate/pull/3037) by [@KorovinQuantori](https://github.com/KorovinQuantori) – Hotfix: reset cell entries list when table is overflown
+
+- [#3083](https://github.com/udecode/plate/pull/3083) by [@KorovinQuantori](https://github.com/KorovinQuantori) – Use getRowSpan\getColSpan instead of pointing at `rowspan` and `colspan` fields directly
+
+## 31.0.0
+
+## 30.9.4
+
+### Patch Changes
+
+- [#3037](https://github.com/udecode/plate/pull/3037) by [@KorovinQuantori](https://github.com/KorovinQuantori) – Hotfix: reset cell entries list when table is overflown
+
+- [#3034](https://github.com/udecode/plate/pull/3034) by [@KorovinQuantori](https://github.com/KorovinQuantori) – canMerge = true only if user selected more than one cell
+
+## 30.9.3
+
+### Patch Changes
+
+- [#3029](https://github.com/udecode/plate/pull/3029) by [@KorovinQuantori](https://github.com/KorovinQuantori) – Ensure that table selection is always a valid sub-table
+
+## 30.9.2
+
+### Patch Changes
+
+- [#3026](https://github.com/udecode/plate/pull/3026) by [@KorovinQuantori](https://github.com/KorovinQuantori) – Copy rowSpan and colSpan properties of cell when set fragment data
+
+## 30.9.1
+
+### Patch Changes
+
+- [#3013](https://github.com/udecode/plate/pull/3013) by [@adrwz](https://github.com/adrwz) – Set "not found" value to -1 instead of 0 for colIndex
+
+## 30.5.3
+
+### Patch Changes
+
+- [`4cbed7159`](https://github.com/udecode/plate/commit/4cbed7159d51f7427051686e45bcf2a8899aeede) by [@zbeyens](https://github.com/zbeyens) – Move `@udecode/plate-common` to peerDeps to fix a bug when multiple instances were installed
+
+## 30.4.5
+
+## 30.1.2
+
+## 30.0.1
+
+### Patch Changes
+
+- [#2873](https://github.com/udecode/plate/pull/2873) by [@zbeyens](https://github.com/zbeyens) – Fix: merging empty cells should result into a single empty paragraph
+
+## 30.0.0
+
+### Major Changes
+
+- [#2867](https://github.com/udecode/plate/pull/2867) by [@12joan](https://github.com/12joan) – Fix: in v28, `TableProvider` was incorrectly shared by all tables in the editor. `TableProvider` must now be rendered as part of `TableElement`.
+
+### Patch Changes
+
+- [#2867](https://github.com/udecode/plate/pull/2867) by [@12joan](https://github.com/12joan) – Fix: Row and column size overrides not being applied correctly
+
+## 29.1.0
+
+### Patch Changes
+
+- [#2860](https://github.com/udecode/plate/pull/2860) by [@johnrazeur](https://github.com/johnrazeur) – Remove unused code from withDeleteTable
+
+## 29.0.1
+
+## 29.0.0
+
+## 28.1.2
+
+### Patch Changes
+
+- [#2833](https://github.com/udecode/plate/pull/2833) by [@AndreyMarchuk](https://github.com/AndreyMarchuk) – Fix lodash import
+
+## 28.1.1
+
+### Patch Changes
+
+- [#2832](https://github.com/udecode/plate/pull/2832) by [@dimaanj](https://github.com/dimaanj) –
+  - Fix: merge of header cells in table
+  - Fix: #2831
+
+## 28.0.0
+
+### Patch Changes
+
+- [#2816](https://github.com/udecode/plate/pull/2816) by [@12joan](https://github.com/12joan) –
+  - Replace `useEdtiorState` with `useEditorSelector`
+
+## 27.0.3
+
+## 27.0.2
+
+### Patch Changes
+
+- [#2808](https://github.com/udecode/plate/pull/2808) by [@zbeyens](https://github.com/zbeyens) – Fix merging cells inside nested tables using the relative paths.
+
+## 27.0.1
+
+### Patch Changes
+
+- [#2806](https://github.com/udecode/plate/pull/2806) by [@zbeyens](https://github.com/zbeyens) – Types: `TTableCellElement['attributes']` is now optional
+
+## 27.0.0
+
+### Patch Changes
+
+- [#2763](https://github.com/udecode/plate/pull/2763) by [@12joan](https://github.com/12joan) –
+  - Migrate store to jotai@2
+  - Render `TableProvider` above editable
+
+## 26.0.5
+
+## 26.0.4
+
+### Patch Changes
+
+- [#2776](https://github.com/udecode/plate/pull/2776) by [@dimaanj](https://github.com/dimaanj) – Fix unmerging a single column
+
+## 26.0.3
+
+### Patch Changes
+
+- [#2724](https://github.com/udecode/plate/pull/2724) by [@duckRabbitPy](https://github.com/duckRabbitPy) – Table row insertion: cells in a newly added row will now receive header styling only if they satisfy specific criteria:
+
+  - Every cell in the column is a header cell,
+  - The table contains more than one row, or
+  - The column possesses a predefined header property.
+
+- [`0b5962d0`](https://github.com/udecode/plate/commit/0b5962d06d6121526e09ff8b3e164d358bbc881c) by [@zbeyens](https://github.com/zbeyens) – Fix: `useTableMergeState` should return false values when `enableMerging: false`
+
+## 26.0.2
+
+### Patch Changes
+
+- [#2771](https://github.com/udecode/plate/pull/2771) by [@KorovinQuantori](https://github.com/KorovinQuantori) – Fixed table insertion inside text nodes
+
+## 26.0.1
+
+### Patch Changes
+
+- [#2768](https://github.com/udecode/plate/pull/2768) by [@KorovinQuantori](https://github.com/KorovinQuantori) – Fixed copy behaviour, when not all table cells are filled with some nodes
+
+## 26.0.0
+
+### Minor Changes
+
+- [#2733](https://github.com/udecode/plate/pull/2733) by [@dimaanj](https://github.com/dimaanj) –
+  - Table plugin has now merging support. To enable it, use option `enableMerging: true`
+
+## 25.0.1
+
+## 25.0.0
+
+## 24.5.2
+
+## 24.4.2
+
+### Patch Changes
+
+- [#2682](https://github.com/udecode/plate/pull/2682) by [@kristian-puccio](https://github.com/kristian-puccio) – newCellChildren is now passed as an option to insertTable or the plugin option is used
+
+## 24.4.0
+
+### Minor Changes
+
+- [#2675](https://github.com/udecode/plate/pull/2675) by [@zbeyens](https://github.com/zbeyens) – Support slate-react 0.99.0
+
+## 24.3.6
+
+## 24.3.5
+
+## 24.3.2
+
+## 24.3.1
+
+## 24.3.0
+
+## 24.2.0
+
+## 24.0.2
+
+## 24.0.1
+
+## 24.0.0
+
+## 23.7.4
+
+## 23.7.0
+
+## 23.6.1
+
+### Patch Changes
+
+- [#2594](https://github.com/udecode/plate/pull/2594) by [@OliverWales](https://github.com/OliverWales) – Fix column deletion early return
+
+## 23.6.0
+
+## 23.4.1
+
+### Patch Changes
+
+- [#2581](https://github.com/udecode/plate/pull/2581) by [@OliverWales](https://github.com/OliverWales) – Modify insertTableRow and insertTableColumn to support header columns to preserve header columns if they exist + not blindly assume that it's a header row if the first cell in that row is a header cell.
+
+## 23.3.1
+
+## 23.3.0
+
+## 23.1.0
+
+### Minor Changes
+
+- [#2557](https://github.com/udecode/plate/pull/2557) by [@zbeyens](https://github.com/zbeyens) – Add support of table cell background styles. To update the component, run:
+  ```bash
+  npx @udecode/plate-ui@latest add table-cell-element
+  ```
+
+### Patch Changes
+
+- [#2555](https://github.com/udecode/plate/pull/2555) by [@zbeyens](https://github.com/zbeyens) – Major changes missing from 23.0.0:
+  - Removed `TableCellElementResizable`. Use `useTableCellElementResizableState` and `useTableCellElementResizable` instead.
+
+## 23.0.1
+
+### Patch Changes
+
+- [#2550](https://github.com/udecode/plate/pull/2550) by [@zbeyens](https://github.com/zbeyens) – Fix cell selection in firefox
+
+## 23.0.0
+
 ## 22.0.2
 
 ## 22.0.1

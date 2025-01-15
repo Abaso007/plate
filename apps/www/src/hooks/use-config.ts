@@ -1,17 +1,19 @@
+import type { BaseColor } from '@/registry/registry-base-colors';
+import type { Style } from '@/registry/registry-styles';
+
 import { useAtom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 
-import { Style } from '@/registry/styles';
-import { Theme } from '@/registry/themes';
-
 type Config = {
+  radius: number;
   style: Style['name'];
-  theme: Theme['name'];
+  theme: BaseColor['name'];
 };
 
 const configAtom = atomWithStorage<Config>('config', {
+  radius: 0.5,
   style: 'default',
-  theme: 'zinc',
+  theme: 'slate',
 });
 
 export function useConfig() {

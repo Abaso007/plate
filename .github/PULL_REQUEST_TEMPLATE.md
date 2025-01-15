@@ -1,16 +1,20 @@
-**Description**
+**Checklist**
+- [x] `yarn typecheck`
+- [x] `yarn lint:fix`
+- [x] `yarn test`
+- [x] `yarn brl`
+- [x] `yarn changeset`
+- [x] [ui changelog](apps/www/content/docs/components/changelog.mdx)
 
-See changesets.
+<!--
 
-<!-- A clear and concise description of what this pull request solves. -->
-<!-- If your change is non-trivial, please include a description of how the
-new logic works, and why you decided to solve it the way you did. -->
+Thanks for the PR. Please complete the checklist below to ensure your PR can be
+merged as soon as possible.
 
- 
-<!-- **Example** -->
+- yarn brl: Required if adding, moving or removing a file in a package.
+- yarn changeset: Required if updating `packages`. Please be brief and descriptive. For breaking
+changes, use a major changeset. For new features, use a minor changeset. For
+bug fixes, use a patch changeset.
+- changelog: Required if updating `apps/www/src/registry`. See `apps/www/content/docs/components/changelog.mdx`.
 
-
-
-<!-- (optional) A sandbox, GIF or video showing the old and new behaviors after this
-pullrequest is merged. Or a code sample showing the usage of a new API. -->
-
+-->

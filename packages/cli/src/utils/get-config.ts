@@ -1,24 +1,21 @@
-import path from 'path';
 import { cosmiconfig } from 'cosmiconfig';
+import path from 'path';
 import { loadConfig } from 'tsconfig-paths';
-import * as z from 'zod';
+import { z } from 'zod';
 
-import { resolveImport } from './resolve-import';
-
-/**
- * This module is primarily concerned with loading and validating a project's
- * configuration. It makes use of `cosmiconfig` to find and load a configuration
- * file, in this case, it's looking for a `components.json` file in the root
- * directory of your project. The schema for this config file is defined with
- * the `zod` library. In case there's no configuration file available, it
- * provides a set of default paths and configuration options.
- */
+import { highlighter } from '@/src/utils/highlighter';
+import { resolveImport } from '@/src/utils/resolve-import';
 
 export const DEFAULT_STYLE = 'default';
+
 export const DEFAULT_COMPONENTS = '@/components';
+
 export const DEFAULT_UTILS = '@/lib/utils';
-export const DEFAULT_TAILWIND_CSS = 'src/styles/globals.css';
+
+export const DEFAULT_TAILWIND_CSS = 'app/globals.css';
+
 export const DEFAULT_TAILWIND_CONFIG = 'tailwind.config.js';
+
 export const DEFAULT_TAILWIND_BASE_COLOR = 'slate';
 
 // TODO: Figure out if we want to support all cosmiconfig formats.
@@ -27,32 +24,70 @@ const explorer = cosmiconfig('components', {
   searchPlaces: ['components.json'],
 });
 
+const registrySchema = z.object({
+  aliases: z
+    .object({
+      components: z.string().optional(),
+      hooks: z.string().optional(),
+      lib: z.string().optional(),
+      ui: z.string().optional(),
+      utils: z.string().optional(),
+    })
+    .optional(),
+  rsc: z.coerce.boolean().optional(),
+  style: z.string().optional(),
+  tailwind: z
+    .object({
+      baseColor: z.string().optional(),
+      config: z.string().optional(),
+      css: z.string().optional(),
+      cssVariables: z.boolean().optional(),
+      prefix: z.string().optional(),
+    })
+    .optional(),
+  tsx: z.coerce.boolean().optional(),
+  url: z.string(),
+});
+
 export const rawConfigSchema = z
   .object({
     $schema: z.string().optional(),
-    style: z.string(),
-    rsc: z.coerce.boolean().default(false),
-    tailwind: z.object({
-      config: z.string(),
-      css: z.string(),
-      baseColor: z.string(),
-      cssVariables: z.boolean().default(true),
-    }),
     aliases: z.object({
       components: z.string(),
+      hooks: z.string().optional(),
+      lib: z.string().optional(),
+      ui: z.string().optional(),
       utils: z.string(),
     }),
+    iconLibrary: z.string().optional(),
+    name: z.string().optional(),
+    registries: z.record(z.string(), registrySchema).optional(),
+    rsc: z.coerce.boolean().default(false),
+    style: z.string(),
+    tailwind: z.object({
+      baseColor: z.string(),
+      config: z.string(),
+      css: z.string(),
+      cssVariables: z.boolean().default(true),
+      prefix: z.string().default('').optional(),
+    }),
+    tsx: z.coerce.boolean().default(true),
+    url: z.string().optional(),
   })
-  .strict();
+  .passthrough();
 
 export type RawConfig = z.infer<typeof rawConfigSchema>;
 
 export const configSchema = rawConfigSchema.extend({
   resolvedPaths: z.object({
+    components: z.string(),
+    cwd: z.string(),
+    hooks: z.string(),
+    lib: z.string(),
     tailwindConfig: z.string(),
     tailwindCss: z.string(),
+    ui: z.string(),
     utils: z.string(),
-    components: z.string(),
   }),
 });
 
@@ -64,27 +99,55 @@ export async function getConfig(cwd: string) {
   if (!config) {
     return null;
   }
+  // Set default icon library if not provided.
+  if (!config.iconLibrary) {
+    config.iconLibrary = config.style === 'new-york' ? 'radix' : 'lucide';
+  }
 
   return await resolveConfigPaths(cwd, config);
 }
 
 export async function resolveConfigPaths(cwd: string, config: RawConfig) {
   // Read tsconfig.json.
-  const tsConfig = await loadConfig(cwd);
+  const tsConfig = loadConfig(cwd);
 
   if (tsConfig.resultType === 'failed') {
     throw new Error(
-      `Failed to load tsconfig.json. ${tsConfig.message ?? ''}`.trim()
+      `Failed to load ${config.tsx ? 'tsconfig' : 'jsconfig'}.json. ${
+        tsConfig.message ?? ''
+      }`.trim()
     );
   }
 
   return configSchema.parse({
     ...config,
     resolvedPaths: {
+      components: await resolveImport(config.aliases.components, tsConfig),
+      cwd,
+      hooks: config.aliases.hooks
+        ? await resolveImport(config.aliases.hooks, tsConfig)
+        : path.resolve(
+            (await resolveImport(config.aliases.components, tsConfig)) ?? cwd,
+            '..',
+            'hooks'
+          ),
+      // TODO: Make this configurable.
+      // For now, we assume the lib and hooks directories are one level up from the components directory.
+      lib: config.aliases.lib
+        ? await resolveImport(config.aliases.lib, tsConfig)
+        : path.resolve(
+            (await resolveImport(config.aliases.utils, tsConfig)) ?? cwd,
+            '..'
+          ),
       tailwindConfig: path.resolve(cwd, config.tailwind.config),
       tailwindCss: path.resolve(cwd, config.tailwind.css),
-      utils: await resolveImport(config.aliases['utils'], tsConfig),
-      components: await resolveImport(config.aliases['components'], tsConfig),
+      ui: config.aliases.ui
+        ? await resolveImport(config.aliases.ui, tsConfig)
+        : path.resolve(
+            (await resolveImport(config.aliases.components, tsConfig)) ?? cwd,
+            'ui'
+          ),
+      utils: await resolveImport(config.aliases.utils, tsConfig),
     },
   });
 }
@@ -99,6 +162,10 @@ export async function getRawConfig(cwd: string): Promise<RawConfig | null> {
 
     return rawConfigSchema.parse(configResult.config);
   } catch (error) {
-    throw new Error(`Invalid configuration found in ${cwd}/components.json.`);
+    const componentPath = `${cwd}/components.json`;
+
+    throw new Error(
+      `Invalid configuration found in ${highlighter.info(componentPath)}.`
+    );
   }
 }

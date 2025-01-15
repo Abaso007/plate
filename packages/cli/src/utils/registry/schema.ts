@@ -1,47 +1,92 @@
-import * as z from 'zod';
+import { z } from 'zod';
 
 // TODO: Extract this to a shared package.
-export const registryItemSchema = z.object({
-  name: z.string(),
-  dependencies: z.array(z.string()).optional(),
-  registryDependencies: z.array(z.string()).optional(),
-  files: z.array(z.string()),
-  type: z.enum([
-    'components:plate-ui',
-    'components:component',
-    'components:example',
-  ]),
+export const registryItemTypeSchema = z.enum([
+  'registry:style',
+  'registry:lib',
+  'registry:example',
+  'registry:block',
+  'registry:component',
+  'registry:ui',
+  'registry:hook',
+  'registry:theme',
+  'registry:page',
+]);
+
+export const registryItemFileSchema = z.object({
+  content: z.string().optional(),
+  path: z.string(),
+  target: z.string().optional(),
+  type: registryItemTypeSchema,
 });
 
-export const registryIndexSchema = z.array(registryItemSchema);
-
-export const registryItemWithContentSchema = registryItemSchema.extend({
-  files: z.array(
-    z.object({
-      name: z.string(),
-      content: z.string(),
+export const registryItemTailwindSchema = z.object({
+  config: z
+    .object({
+      content: z.array(z.string()).optional(),
+      plugins: z.array(z.string()).optional(),
+      theme: z.record(z.string(), z.any()).optional(),
     })
-  ),
+    .optional(),
 });
 
-export const registryWithContentSchema = z.array(registryItemWithContentSchema);
+export const registryItemCssVarsSchema = z.object({
+  dark: z.record(z.string(), z.string()).optional(),
+  light: z.record(z.string(), z.string()).optional(),
+});
 
-export const stylesSchema = z.array(
-  z.object({
-    name: z.string(),
-    label: z.string(),
+export const registryItemSchema = z.object({
+  cssVars: registryItemCssVarsSchema.optional(),
+  dependencies: z.array(z.string()).optional(),
+  description: z.string().optional(),
+  devDependencies: z.array(z.string()).optional(),
+  docs: z.string().optional(),
+  files: z.array(registryItemFileSchema).optional(),
+  meta: z.record(z.string(), z.any()).optional(),
+  name: z.string(),
+  registryDependencies: z.array(z.string()).optional(),
+  tailwind: registryItemTailwindSchema.optional(),
+  type: registryItemTypeSchema,
+});
+
+export type RegistryItem = z.infer<typeof registryItemSchema>;
+
+export const registryIndexSchema = z.array(
+  registryItemSchema.extend({
+    files: z.array(z.union([z.string(), registryItemFileSchema])).optional(),
   })
 );
 
+export const stylesSchema = z.array(
+  z.object({
+    label: z.string(),
+    name: z.string(),
+  })
+);
+
+export const iconsSchema = z.record(
+  z.string(),
+  z.record(z.string(), z.string())
+);
+
 export const registryBaseColorSchema = z.object({
-  inlineColors: z.object({
-    light: z.record(z.string(), z.string()),
-    dark: z.record(z.string(), z.string()),
-  }),
   cssVars: z.object({
-    light: z.record(z.string(), z.string()),
     dark: z.record(z.string(), z.string()),
+    light: z.record(z.string(), z.string()),
+  }),
+  cssVarsTemplate: z.string(),
+  inlineColors: z.object({
+    dark: z.record(z.string(), z.string()),
+    light: z.record(z.string(), z.string()),
   }),
   inlineColorsTemplate: z.string(),
-  cssVarsTemplate: z.string(),
+});
+
+export const registryResolvedItemsTreeSchema = registryItemSchema.pick({
+  cssVars: true,
+  dependencies: true,
+  devDependencies: true,
+  docs: true,
+  files: true,
+  tailwind: true,
 });

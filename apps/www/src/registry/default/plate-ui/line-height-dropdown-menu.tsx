@@ -1,11 +1,14 @@
+'use client';
+
 import React from 'react';
-import { DropdownMenuProps } from '@radix-ui/react-dropdown-menu';
+
+import type { DropdownMenuProps } from '@radix-ui/react-dropdown-menu';
+
 import {
   useLineHeightDropdownMenu,
   useLineHeightDropdownMenuState,
-} from '@udecode/plate-line-height';
-
-import { Icons } from '@/components/icons';
+} from '@udecode/plate-line-height/react';
+import { WrapText } from 'lucide-react';
 
 import {
   DropdownMenu,
@@ -30,20 +33,17 @@ export function LineHeightDropdownMenu({ ...props }: DropdownMenuProps) {
           tooltip="Line height"
           isDropdown
         >
-          <Icons.lineHeight />
+          <WrapText />
         </ToolbarButton>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent align="start" className="min-w-0">
-        <DropdownMenuRadioGroup
-          className="flex flex-col gap-0.5"
-          {...radioGroupProps}
-        >
+      <DropdownMenuContent className="min-w-0" align="start">
+        <DropdownMenuRadioGroup {...radioGroupProps}>
           {state.values.map((_value) => (
             <DropdownMenuRadioItem
               key={_value}
-              value={_value}
               className="min-w-[180px]"
+              value={_value}
             >
               {_value}
             </DropdownMenuRadioItem>

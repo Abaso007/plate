@@ -1,13 +1,13 @@
-import { SyntaxKind } from 'ts-morph';
-import * as z from 'zod';
+import type { registryBaseColorSchema } from '@/src/utils/registry/schema';
+import type { Transformer } from '@/src/utils/transformers';
+import type { z } from 'zod';
 
-import { registryBaseColorSchema } from '../registry/schema';
-import { Transformer } from '../transformers';
+import { SyntaxKind } from 'ts-morph';
 
 export const transformCssVars: Transformer = async ({
-  sourceFile,
-  config,
   baseColor,
+  config,
+  sourceFile,
 }) => {
   // No transform if using css variables.
   if (config.tailwind?.cssVariables || !baseColor?.inlineColors) {
@@ -16,7 +16,6 @@ export const transformCssVars: Transformer = async ({
 
   // Find jsx attributes with the name className.
   // const openingElements = sourceFile.getDescendantsOfKind(SyntaxKind.JsxElement)
-  // console.log(openingElements)
   // const jsxAttributes = sourceFile
   //   .getDescendantsOfKind(SyntaxKind.JsxAttribute)
   //   .filter((node) => node.getName() === "className")
@@ -33,11 +32,13 @@ export const transformCssVars: Transformer = async ({
   // }
   sourceFile.getDescendantsOfKind(SyntaxKind.StringLiteral).forEach((node) => {
     const value = node.getText();
+
     if (value) {
       const valueWithColorMapping = applyColorMapping(
         value.replace(/'/g, '').replace(/"/g, ''),
         baseColor.inlineColors
       );
+      // node.replaceWithText(`"${valueWithColorMapping.trim()}"`);
       node.replaceWithText(`'${valueWithColorMapping.trim()}'`);
     }
   });
@@ -61,7 +62,6 @@ export const transformCssVars: Transformer = async ({
 //       if (node?.value?.type) {
 //         if (node.value.type === "StringLiteral") {
 //           node.value.value = applyColorMapping(node.value.value)
-//           console.log(node.value.value)
 //         }
 
 //         if (
@@ -147,38 +147,42 @@ export function applyColorMapping(
 
   // Build color mappings.
   const classNames = input.split(' ');
-  const lightMode: string[] = [];
-  const darkMode: string[] = [];
+  const lightMode = new Set<string>();
+  const darkMode = new Set<string>();
+
   for (const className of classNames) {
     const [variant, value, modifier] = splitClassName(className);
-    const prefix = PREFIXES.find((pre) => value?.startsWith(pre));
+    const prefix = PREFIXES.find((prefix) => value?.startsWith(prefix));
+
     if (!prefix) {
-      if (!lightMode.includes(className)) {
-        lightMode.push(className);
+      if (!lightMode.has(className)) {
+        lightMode.add(className);
       }
+
       continue;
     }
 
     const needle = value?.replace(prefix, '');
+
     if (needle && needle in mapping.light) {
-      lightMode.push(
+      lightMode.add(
         [variant, `${prefix}${mapping.light[needle]}`]
           .filter(Boolean)
           .join(':') + (modifier ? `/${modifier}` : '')
       );
 
-      darkMode.push(
+      darkMode.add(
         ['dark', variant, `${prefix}${mapping.dark[needle]}`]
           .filter(Boolean)
           .join(':') + (modifier ? `/${modifier}` : '')
       );
+
       continue;
     }
-
-    if (!lightMode.includes(className)) {
-      lightMode.push(className);
+    if (!lightMode.has(className)) {
+      lightMode.add(className);
     }
   }
 
-  return lightMode.join(' ') + ' ' + darkMode.join(' ').trim();
+  return [...Array.from(lightMode), ...Array.from(darkMode)].join(' ').trim();
 }

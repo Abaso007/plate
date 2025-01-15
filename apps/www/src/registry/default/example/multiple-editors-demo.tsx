@@ -1,49 +1,68 @@
-import React from 'react';
-import { basicNodesPlugins } from '@/plate/demo/plugins/basicNodesPlugins';
-import { imagePlugins } from '@/plate/demo/plugins/imagePlugins';
-import { basicElementsValue } from '@/plate/demo/values/basicElementsValue';
-import { basicMarksValue } from '@/plate/demo/values/basicMarksValue';
-import { imageValue } from '@/plate/demo/values/mediaValue';
-import { Plate, PlateProps, PlateProvider } from '@udecode/plate-common';
+'use client';
 
-import { MyValue } from '@/types/plate-types';
-import { PlaygroundTurnIntoDropdownMenu } from '@/components/plate-ui/playground-turn-into-dropdown-menu';
+import React from 'react';
+
+import { Plate } from '@udecode/plate/react';
+import { BasicElementsPlugin } from '@udecode/plate-basic-elements/react';
+import { BasicMarksPlugin } from '@udecode/plate-basic-marks/react';
+import { ImagePlugin } from '@udecode/plate-media/react';
+
+import { deletePlugins } from '@/registry/default/components/editor/plugins/delete-plugins';
+import { useCreateEditor } from '@/registry/default/components/editor/use-create-editor';
+import { basicElementsValue } from '@/registry/default/example/values/basic-elements-value';
+import { basicMarksValue } from '@/registry/default/example/values/basic-marks-value';
+import { imageValue } from '@/registry/default/example/values/media-value';
+import { Editor, EditorContainer } from '@/registry/default/plate-ui/editor';
 import { FixedToolbar } from '@/registry/default/plate-ui/fixed-toolbar';
 import { Separator } from '@/registry/default/plate-ui/separator';
-
-function Editor(props: PlateProps<MyValue>) {
-  return <Plate {...props}>{/* <MarkFloatingToolbar /> */}</Plate>;
-}
+import { TurnIntoDropdownMenu } from '@/registry/default/plate-ui/turn-into-dropdown-menu';
 
 export default function MultipleEditorsDemo() {
+  const editor = useCreateEditor({
+    plugins: [BasicElementsPlugin, BasicMarksPlugin],
+    value: basicElementsValue,
+  });
+
+  const editorMarks = useCreateEditor({
+    id: 'marks',
+    plugins: [BasicElementsPlugin, BasicMarksPlugin],
+    value: basicMarksValue,
+  });
+
+  const editorImage = useCreateEditor({
+    id: 'marks',
+    plugins: [
+      BasicElementsPlugin,
+      BasicMarksPlugin,
+      ImagePlugin,
+      ...deletePlugins,
+    ],
+    value: imageValue,
+  });
+
   return (
-    <PlateProvider<MyValue>
-      plugins={basicNodesPlugins}
-      initialValue={basicElementsValue}
-    >
-      <PlateProvider<MyValue>
-        id="marks"
-        plugins={basicNodesPlugins}
-        initialValue={basicMarksValue}
-      >
-        <PlateProvider<MyValue>
-          id="image"
-          plugins={imagePlugins}
-          initialValue={imageValue}
-        >
+    <Plate editor={editor}>
+      <Plate editor={editorMarks}>
+        <Plate editor={editorImage}>
           <FixedToolbar>
-            <PlaygroundTurnIntoDropdownMenu />
+            <TurnIntoDropdownMenu />
           </FixedToolbar>
 
           <div>
-            <Editor />
+            <EditorContainer>
+              <Editor />
+            </EditorContainer>
             <Separator />
-            <Editor id="marks" />
+            <EditorContainer>
+              <Editor id="marks" />
+            </EditorContainer>
             <Separator />
-            <Editor id="image" />
+            <EditorContainer>
+              <Editor id="image" />
+            </EditorContainer>
           </div>
-        </PlateProvider>
-      </PlateProvider>
-    </PlateProvider>
+        </Plate>
+      </Plate>
+    </Plate>
   );
 }

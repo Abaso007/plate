@@ -1,37 +1,27 @@
 {
-  "awesomeTypescriptLoaderOptions": {
-    "ignoreDiagnostics": [7005]
-  },
   "compilerOptions": {
+    "rootDir": ".",
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "allowJs": true,
-    "allowSyntheticDefaultImports": true,
-    "downlevelIteration": true,
-    "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
+    "module": "ESNext",
     "jsx": "react",
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "noEmit": true,
+    "noImplicitAny": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,
-    "target": "es2017",
-    "outDir": "dist",
-    "baseUrl": ".",
-    "paths": {
-      "@/plate/*": ["apps/www/src/lib/plate/*"],
-      "@/lib/*": ["apps/www/src/lib/*"],
-      "@/types/*": ["apps/www/src/types/*"],
-      "@/styles/*": ["apps/www/src/styles/*"],
-      "@/components/*": ["apps/www/src/components/*"],
-      "@/registry/*": ["apps/www/src/registry/*"],
-      "@/__registry__/*": ["apps/www/src/__registry__/*"],
-      "@/hooks/*": ["apps/www/src/hooks/*"],
-      "@/config/*": ["apps/www/src/config/*"]
-    }
+    "strictBindCallApply": true,
+    "strictFunctionTypes": true,
+    "strictNullChecks": true,
+    "strictPropertyInitialization": true,
+    "target": "ESNext",
+    "types": ["node","@testing-library/jest-dom"]
   },
   "exclude": ["node_modules", "**/node_modules", "dist", "**/dist"]
 }

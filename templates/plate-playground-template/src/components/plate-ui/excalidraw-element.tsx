@@ -1,30 +1,31 @@
+'use client';
+
 import React from 'react';
-import { PlateElement, PlateElementProps, Value } from '@udecode/plate-common';
-import {
-  TExcalidrawElement,
-  useExalidawElement,
-} from '@udecode/plate-excalidraw';
 
-export function ExcalidrawElement({
-  nodeProps,
-  ...props
-}: PlateElementProps<Value, TExcalidrawElement>) {
-  const { children, element } = props;
+import { withRef } from '@udecode/cn';
+import { useExcalidrawElement } from '@udecode/plate-excalidraw/react';
 
-  const { Excalidraw, excalidrawProps } = useExalidawElement({
-    element,
-  });
+import { PlateElement } from './plate-element';
 
-  return (
-    <PlateElement {...props}>
-      <div contentEditable={false}>
-        <div className="h-[600px]">
-          {Excalidraw && (
-            <Excalidraw {...nodeProps} {...(excalidrawProps as any)} />
-          )}
+export const ExcalidrawElement = withRef<typeof PlateElement>(
+  ({ nodeProps, ...props }, ref) => {
+    const { children, element } = props;
+
+    const { Excalidraw, excalidrawProps } = useExcalidrawElement({
+      element,
+    });
+
+    return (
+      <PlateElement ref={ref} {...props}>
+        <div contentEditable={false}>
+          <div className="mx-auto aspect-video h-[600px] w-[min(100%,600px)] overflow-hidden rounded-sm border">
+            {Excalidraw && (
+              <Excalidraw {...nodeProps} {...(excalidrawProps as any)} />
+            )}
+          </div>
         </div>
-      </div>
-      {children}
-    </PlateElement>
-  );
-}
+        {children}
+      </PlateElement>
+    );
+  }
+);

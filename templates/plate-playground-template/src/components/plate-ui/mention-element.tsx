@@ -1,54 +1,63 @@
-import React, { forwardRef } from 'react';
-import {
-  getHandler,
-  PlateElement,
-  PlateElementProps,
-  Value,
-} from '@udecode/plate-common';
-import { TMentionElement } from '@udecode/plate-mention';
-import { useFocused, useSelected } from 'slate-react';
+'use client';
 
-import { cn } from '@/lib/utils';
+import React from 'react';
 
-export interface MentionElementProps
-  extends PlateElementProps<Value, TMentionElement> {
-  /**
-   * Prefix rendered before mention
-   */
-  prefix?: string;
-  onClick?: (mentionNode: any) => void;
-  renderLabel?: (mentionable: TMentionElement) => string;
-}
+import type { TMentionElement } from '@udecode/plate-mention';
 
-const MentionElement = forwardRef<
-  React.ElementRef<typeof PlateElement>,
-  MentionElementProps
->(({ prefix, renderLabel, className, onClick, ...props }, ref) => {
-  const { children, element } = props;
+import { cn, withRef } from '@udecode/cn';
+import { IS_APPLE, getHandler } from '@udecode/plate';
+import { useFocused, useReadOnly, useSelected } from '@udecode/plate/react';
 
+import { useMounted } from '@/hooks/use-mounted';
+
+import { PlateElement } from './plate-element';
+
+export const MentionElement = withRef<
+  typeof PlateElement,
+  {
+    prefix?: string;
+    onClick?: (mentionNode: any) => void;
+  }
+>(({ children, className, prefix, onClick, ...props }, ref) => {
+  const element = props.element as TMentionElement;
   const selected = useSelected();
   const focused = useFocused();
+  const mounted = useMounted();
+  const readOnly = useReadOnly();
 
   return (
     <PlateElement
       ref={ref}
       className={cn(
-        'inline-block cursor-pointer rounded-md bg-muted px-1.5 py-0.5 align-baseline text-sm font-medium',
+        className,
+        'inline-block rounded-md bg-muted px-1.5 py-0.5 align-baseline text-sm font-medium',
+        !readOnly && 'cursor-pointer',
         selected && focused && 'ring-2 ring-ring',
-        className
+        element.children[0].bold === true && 'font-bold',
+        element.children[0].italic === true && 'italic',
+        element.children[0].underline === true && 'underline'
       )}
+      onClick={getHandler(onClick, element)}
       data-slate-value={element.value}
       contentEditable={false}
-      onClick={getHandler(onClick, element)}
+      draggable
       {...props}
     >
-      {prefix}
-      {renderLabel ? renderLabel(element) : element.value}
-      {children}
+      {mounted && IS_APPLE ? (
+        // Mac OS IME https://github.com/ianstormtaylor/slate/issues/3490
+        <React.Fragment>
+          {children}
+          {prefix}
+          {element.value}
+        </React.Fragment>
+      ) : (
+        // Others like Android https://github.com/ianstormtaylor/slate/pull/5360
+        <React.Fragment>
+          {prefix}
+          {element.value}
+          {children}
+        </React.Fragment>
+      )}
     </PlateElement>
   );
 });
-
-MentionElement.displayName = 'MentionElement';
-
-export { MentionElement };

@@ -1,51 +1,61 @@
-import React, { useState } from 'react';
-import { editableProps } from '@/plate/demo/editableProps';
-import {
-  createBoldPlugin,
-  createCodePlugin,
-  createItalicPlugin,
-  createStrikethroughPlugin,
-  createUnderlinePlugin,
-} from '@udecode/plate-basic-marks';
-import { createBlockquotePlugin } from '@udecode/plate-block-quote';
-import { createCodeBlockPlugin } from '@udecode/plate-code-block';
-import { Plate } from '@udecode/plate-common';
-import { createHeadingPlugin } from '@udecode/plate-heading';
-import { createParagraphPlugin } from '@udecode/plate-paragraph';
+'use client';
 
-import { MyPlatePlugin, MyValue } from '@/types/plate-types';
+import React, { useState } from 'react';
+
+import type { Value } from '@udecode/plate';
+
+import { Plate, usePlateEditor } from '@udecode/plate/react';
+import {
+  BoldPlugin,
+  CodePlugin,
+  ItalicPlugin,
+  UnderlinePlugin,
+} from '@udecode/plate-basic-marks/react';
+import { BlockquotePlugin } from '@udecode/plate-block-quote/react';
+import { HeadingPlugin } from '@udecode/plate-heading/react';
+
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
+import { Editor, EditorContainer } from '@/registry/default/plate-ui/editor';
 
 import { basicEditorValue } from './basic-plugins-components-demo';
 
-const plugins: MyPlatePlugin[] = [
-  createParagraphPlugin(),
-  createBlockquotePlugin(),
-  createCodeBlockPlugin(),
-  createHeadingPlugin(),
-
-  createBoldPlugin(),
-  createItalicPlugin(),
-  createUnderlinePlugin(),
-  createStrikethroughPlugin(),
-  createCodePlugin(),
-];
-
 export default function BasicPluginsDefaultDemo() {
-  const [debugValue, setDebugValue] = useState<MyValue | null>(null);
+  const [debugValue, setDebugValue] = useState<Value>(basicEditorValue);
+  const editor = usePlateEditor({
+    plugins: [
+      BlockquotePlugin,
+      HeadingPlugin,
+      BoldPlugin,
+      ItalicPlugin,
+      UnderlinePlugin,
+      CodePlugin,
+    ],
+    value: basicEditorValue,
+  });
 
   return (
-    <Plate<MyValue>
-      editableProps={editableProps}
-      initialValue={basicEditorValue}
-      plugins={plugins}
-      onChange={(newValue) => {
-        setDebugValue(newValue);
+    <Plate
+      onChange={({ value }) => {
+        setDebugValue(value);
         // save newValue...
       }}
+      editor={editor}
     >
-      debug value:
-      <br />
-      {JSON.stringify(debugValue)}
+      <EditorContainer>
+        <Editor />
+      </EditorContainer>
+
+      <Accordion type="single" collapsible>
+        <AccordionItem value="manual-installation">
+          <AccordionTrigger>Debug Value</AccordionTrigger>
+          <AccordionContent>{JSON.stringify(debugValue)}</AccordionContent>
+        </AccordionItem>
+      </Accordion>
     </Plate>
   );
 }

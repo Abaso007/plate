@@ -1,0 +1,70 @@
+import type { Emoji, EmojiMartData } from '@emoji-mart/data';
+import type { Descendant } from '@udecode/plate';
+import type { TriggerComboboxPluginOptions } from '@udecode/plate-combobox';
+
+type ReverseMap<T> = T[keyof T];
+
+export type EmojiSettingsType = {
+  buttonSize: {
+    value: number;
+  };
+  categories: {
+    value?: EmojiCategoryList[];
+  };
+  perLine: {
+    value: number;
+  };
+  showFrequent: {
+    value: boolean;
+    key?: string;
+    limit?: number;
+    prefix?: string;
+  };
+};
+
+export type EmojiPluginOptions<TEmoji extends Emoji = Emoji> = {
+  createEmojiNode?: (emoji: TEmoji) => Descendant;
+  /**
+   * The emoji data.
+   *
+   * @example
+   *   import emojiMartData from '@emoji-mart/data';
+   */
+  data?: EmojiMartData;
+} & TriggerComboboxPluginOptions;
+
+export const EmojiCategory = {
+  Activity: 'activity',
+  Custom: 'custom',
+  Flags: 'flags',
+  Foods: 'foods',
+  Frequent: 'frequent',
+  Nature: 'nature',
+  Objects: 'objects',
+  People: 'people',
+  Places: 'places',
+  Symbols: 'symbols',
+} as const;
+
+export type EmojiCategoryList = ReverseMap<typeof EmojiCategory>;
+
+export type i18nProps = {
+  categories: Record<EmojiCategoryList, string>;
+  clear: string;
+  pick: string;
+  search: string;
+  searchNoResultsSubtitle: string;
+  searchNoResultsTitle: string;
+  searchResult: string;
+  skins: Record<'1' | '2' | '3' | '4' | '5' | '6' | 'choose', string>;
+};
+
+export type EmojiIconList<T = string> = {
+  search: {
+    delete: T;
+    loupe: T;
+  };
+  categories: Record<EmojiCategoryList, { outline: T; solid: T }>;
+};
+
+export type FrequentEmojis = Record<string, number>;

@@ -1,37 +1,42 @@
-import { existsSync, promises as fs } from 'fs';
-import path from 'path';
-import chalk from 'chalk';
 import { Command } from 'commander';
-import { execa } from 'execa';
-import ora from 'ora';
+import deepmerge from 'deepmerge';
+import path from 'path';
 import prompts from 'prompts';
-import * as z from 'zod';
+import { z } from 'zod';
 
-import { getConfig } from '../utils/get-config';
-import { getPackageManager } from '../utils/get-package-manager';
-import { handleError } from '../utils/handle-error';
-import { logger } from '../utils/logger';
-import {
-  fetchTree,
-  getItemTargetPath,
-  getRegistryBaseColor,
-  getRegistryIndex,
-  resolveTree,
-} from '../utils/registry';
-import { transform } from '../utils/transformers';
+import { runInit } from '@/src/commands/init';
+import { preFlightAdd } from '@/src/preflights/preflight-add';
+import { addComponents } from '@/src/utils/add-components';
+import { createProject } from '@/src/utils/create-project';
+import * as ERRORS from '@/src/utils/errors';
+import { handleError } from '@/src/utils/handle-error';
+import { highlighter } from '@/src/utils/highlighter';
+import { logger } from '@/src/utils/logger';
+import { REGISTRY_MAP, getRegistryIndex } from '@/src/utils/registry';
+import { updateAppIndex } from '@/src/utils/update-app-index';
 
-const addOptionsSchema = z.object({
+import { type Config, resolveConfigPaths } from '../utils/get-config';
+
+export const addOptionsSchema = z.object({
+  all: z.boolean(),
   components: z.array(z.string()).optional(),
-  yes: z.boolean(),
-  overwrite: z.boolean(),
   cwd: z.string(),
+  list: z.boolean().optional(),
+  overwrite: z.boolean(),
   path: z.string().optional(),
+  registry: z.string().optional(),
+  silent: z.boolean(),
+  srcDir: z.boolean().optional(),
+  yes: z.boolean(),
 });
 
 export const add = new Command()
   .name('add')
   .description('add a component to your project')
-  .argument('[components...]', 'the components to add')
+  .argument(
+    '[components...]',
+    'the components to add or a url to the component. Use prefix (eg. plate/editor) to specify registry'
+  )
   .option('-y, --yes', 'skip confirmation prompt.', false)
   .option('-o, --overwrite', 'overwrite existing files.', false)
   .option(
@@ -39,141 +44,305 @@ export const add = new Command()
     'the working directory. defaults to the current directory.',
     process.cwd()
   )
+  .option('-a, --all', 'add all available components', false)
   .option('-p, --path <path>', 'the path to add the component to.')
+  .option('-s, --silent', 'mute output.', false)
+  .option(
+    '--src-dir',
+    'use the src directory when creating a new project.',
+    false
+  )
+  .option('-r, --registry <registry>', 'registry name or url')
+  .option('-l, --list', 'list all available registries', false)
   .action(async (components, opts) => {
     try {
-      const options = addOptionsSchema.parse({
-        components,
-        ...opts,
+      // DIFF START
+      let registry = opts.registry;
+      const prefixedComponents = components.map((component: any) => {
+        const [prefix, name] = component.split('/');
+
+        if (name && REGISTRY_MAP[prefix as keyof typeof REGISTRY_MAP]) {
+          registry = prefix;
+
+          return name;
+        }
+
+        return component;
       });
 
-      const cwd = path.resolve(options.cwd);
+      const options = addOptionsSchema.parse({
+        components: prefixedComponents,
+        cwd: path.resolve(opts.cwd),
+        registry,
+        ...opts,
+      });
+      // DIFF END
 
-      if (!existsSync(cwd)) {
-        logger.error(`The path ${cwd} does not exist. Please try again.`);
-        process.exit(1);
-      }
+      // Confirm if user is installing themes.
+      // For now, we assume a theme is prefixed with "theme-".
+      const isTheme = options.components?.some((component) =>
+        component.includes('theme-')
+      );
 
-      const config = await getConfig(cwd);
-      if (!config) {
-        logger.warn(
-          `Configuration is missing. Please run ${chalk.green(
-            `init`
-          )} to create a components.json file.`
-        );
-        process.exit(1);
-      }
-
-      const registryIndex = await getRegistryIndex();
-
-      let selectedComponents = options.components;
-      if (!options.components?.length) {
-        const { components } = await prompts({
-          type: 'multiselect',
-          name: 'components',
-          message: 'Which components would you like to add?',
-          hint: 'Space to select. A to toggle all. Enter to submit.',
-          instructions: false,
-          choices: registryIndex.map((entry) => ({
-            title: entry.name,
-            value: entry.name,
-          })),
-        });
-        selectedComponents = components;
-      }
-
-      if (!selectedComponents?.length) {
-        logger.warn('No components selected. Exiting.');
-        process.exit(0);
-      }
-
-      const tree = await resolveTree(registryIndex, selectedComponents);
-      const payload = await fetchTree(config.style, tree);
-      const baseColor = await getRegistryBaseColor(config.tailwind.baseColor);
-
-      if (payload.length === 0) {
-        logger.warn('Selected components not found. Exiting.');
-        process.exit(0);
-      }
-
-      if (!options.yes) {
-        const { proceed } = await prompts({
+      if (!options.yes && isTheme) {
+        logger.break();
+        const { confirm } = await prompts({
+          message: highlighter.warn(
+            'You are about to install a new theme. \nExisting CSS variables will be overwritten. Continue?'
+          ),
+          name: 'confirm',
           type: 'confirm',
-          name: 'proceed',
-          message: `Ready to install components and dependencies. Proceed?`,
+        });
+
+        if (!confirm) {
+          logger.break();
+          logger.log('Theme installation cancelled.');
+          logger.break();
+          process.exit(1);
+        }
+      }
+
+      // eslint-disable-next-line prefer-const
+      let { config, errors } = await preFlightAdd(options);
+
+      // No components.json file. Prompt the user to run init.
+      if (
+        !config ||
+        errors[ERRORS.MISSING_CONFIG] ||
+        errors[ERRORS.MISSING_REGISTRY]
+      ) {
+        const { proceed } = await prompts({
           initial: true,
+          message: errors[ERRORS.MISSING_REGISTRY]
+            ? `You need to add ${highlighter.info(
+                `${options.registry}`
+              )} registry to your config. Proceed?`
+            : `You need to create a ${highlighter.info(
+                'components.json'
+              )} file to add components. Proceed?`,
+          name: 'proceed',
+          type: 'confirm',
         });
 
         if (!proceed) {
-          process.exit(0);
+          logger.break();
+          process.exit(1);
         }
+
+        let url = options.registry;
+
+        if (url) {
+          url = REGISTRY_MAP[url as keyof typeof REGISTRY_MAP] ?? url;
+        }
+
+        config = await runInit({
+          cwd: options.cwd,
+          defaults: false,
+          force: true,
+          isNewProject: false,
+          name: options.registry,
+          silent: true,
+          skipPreflight: false,
+          srcDir: options.srcDir,
+          url,
+          yes: true,
+        });
+
+        options.cwd = config.resolvedPaths.cwd;
+        const res = await preFlightAdd(options);
+        // config = res.config!;
+        errors = res.errors!;
       }
 
-      const spinner = ora(`Installing components...`).start();
-      for (const item of payload) {
-        spinner.text = `Installing ${item.name}...`;
-        const targetDir = await getItemTargetPath(
-          config,
-          item,
-          options.path ? path.resolve(cwd, options.path) : undefined
+      const registryConfig = await getRegistryConfig(config, options);
+
+      if (!options.components?.length) {
+        options.components = await promptForRegistryComponents(
+          options,
+          registryConfig.url
         );
-
-        if (!targetDir) {
-          continue;
-        }
-
-        if (!existsSync(targetDir)) {
-          await fs.mkdir(targetDir, { recursive: true });
-        }
-
-        const existingComponent = item.files.filter((file) =>
-          existsSync(path.resolve(targetDir, file.name))
-        );
-
-        if (existingComponent.length > 0 && !options.overwrite) {
-          if (selectedComponents.includes(item.name)) {
-            logger.warn(
-              `Component ${item.name} already exists. Use ${chalk.green(
-                '--overwrite'
-              )} to overwrite.`
-            );
-            process.exit(1);
-          }
-
-          continue;
-        }
-
-        for (const file of item.files) {
-          const filePath = path.resolve(targetDir, file.name);
-
-          // Run transformers.
-          const content = await transform({
-            filename: file.name,
-            raw: file.content,
-            config,
-            baseColor,
-          });
-
-          await fs.writeFile(filePath, content);
-        }
-
-        // Install dependencies.
-        if (item.dependencies?.length) {
-          const packageManager = await getPackageManager(cwd);
-          await execa(
-            packageManager,
-            [
-              packageManager === 'npm' ? 'install' : 'add',
-              ...item.dependencies,
-            ],
-            {
-              cwd,
-            }
-          );
-        }
       }
-      spinner.succeed(`Done.`);
+
+      let shouldUpdateAppIndex = false;
+
+      if (errors[ERRORS.MISSING_DIR_OR_EMPTY_PROJECT]) {
+        const { projectPath } = await createProject({
+          cwd: options.cwd,
+          force: options.overwrite,
+          srcDir: options.srcDir,
+        });
+
+        if (!projectPath) {
+          logger.break();
+          process.exit(1);
+        }
+
+        options.cwd = projectPath;
+
+        let url = options.registry;
+
+        if (url) {
+          url = REGISTRY_MAP[url as keyof typeof REGISTRY_MAP] ?? url;
+        }
+
+        config = await runInit({
+          cwd: options.cwd,
+          defaults: false,
+          force: true,
+          isNewProject: true,
+          name: options.registry,
+          silent: true,
+          skipPreflight: true,
+          srcDir: options.srcDir,
+          url,
+          yes: true,
+        });
+        options.cwd = config.resolvedPaths.cwd;
+
+        shouldUpdateAppIndex =
+          options.components?.length === 1 &&
+          !!/\/chat\/b\//.exec(options.components[0]);
+      }
+      if (!config) {
+        throw new Error(
+          `Failed to read config at ${highlighter.info(options.cwd)}.`
+        );
+      }
+
+      await addComponents(options.components, registryConfig, options);
+
+      // If we're adding a single component and it's from the v0 registry,
+      // let's update the app/page.tsx file to import the component.
+      if (shouldUpdateAppIndex) {
+        await updateAppIndex(options.components[0], config);
+      }
     } catch (error) {
+      logger.break();
       handleError(error);
     }
   });
+
+async function getRegistryConfig(
+  config: Config,
+  opts: z.infer<typeof addOptionsSchema>
+): Promise<Config> {
+  const { registry } = opts;
+
+  if (
+    opts.list &&
+    config.registries &&
+    Object.keys(config.registries).length > 0
+  ) {
+    const { selectedRegistry } = await prompts({
+      choices: [
+        { title: 'default', value: 'default' },
+        ...Object.entries(config.registries).map(([name]) => ({
+          title: name,
+          value: name,
+        })),
+      ],
+      message: 'Select a registry:',
+      name: 'selectedRegistry',
+      type: 'select',
+    });
+
+    return selectedRegistry === 'default'
+      ? { ...config }
+      : await resolveConfigPaths(
+          opts.cwd,
+          deepmerge(config, config.registries[selectedRegistry]) as Config
+        );
+  }
+  // If a registry is specified
+  if (registry) {
+    // If it's a URL, use it directly
+
+    if (registry.startsWith('http://') || registry.startsWith('https://')) {
+      // Find registry by url
+
+      if (config.registries) {
+        const registryConfig = Object.values(config.registries)?.find(
+          (reg) => reg.url === registry
+        );
+
+        if (registryConfig) {
+          return await resolveConfigPaths(
+            opts.cwd,
+            deepmerge(config, registryConfig) as Config
+          );
+        }
+      }
+
+      return { ...config, url: registry };
+    }
+    // If it's a named registry in the config, use that
+    if (config.registries?.[registry]) {
+      return await resolveConfigPaths(
+        opts.cwd,
+        deepmerge(config, config.registries[registry]) as Config
+      );
+    }
+
+    // If it's neither a URL nor a known registry name, warn the user and fallback to the default config
+    logger.warn(
+      `Registry "${registry}" not found in configuration. Using the default registry.`
+    );
+
+    return { ...config };
+  }
+
+  // If no registry is specified and no registries in config, use the default config
+  return { ...config };
+}
+
+async function promptForRegistryComponents(
+  options: z.infer<typeof addOptionsSchema>,
+  registryUrl?: string
+) {
+  const registryIndex = await getRegistryIndex(registryUrl);
+
+  if (!registryIndex) {
+    logger.break();
+    handleError(new Error('Failed to fetch registry index.'));
+
+    return [];
+  }
+  if (options.all) {
+    return registryIndex.map((entry) => entry.name);
+  }
+  if (options.components?.length) {
+    return options.components;
+  }
+
+  const { components } = await prompts({
+    choices: registryIndex
+      .filter((entry) => entry.type === 'registry:ui')
+      .map((entry) => ({
+        selected: options.all ? true : options.components?.includes(entry.name),
+        title: entry.name,
+        value: entry.name,
+      })),
+    hint: 'Space to select. A to toggle all. Enter to submit.',
+    instructions: false,
+    message: 'Which components would you like to add?',
+    name: 'components',
+    type: 'multiselect',
+  });
+
+  if (!components?.length) {
+    logger.warn('No components selected. Exiting.');
+    logger.info('');
+    process.exit(1);
+  }
+
+  const result = z.array(z.string()).safeParse(components);
+
+  if (!result.success) {
+    logger.error('');
+    handleError(new Error('Something went wrong. Please try again.'));
+
+    return [];
+  }
+
+  return result.data;
+}

@@ -1,21 +1,28 @@
+'use client';
+
 import React from 'react';
-import { editableProps } from '@/plate/demo/editableProps';
-import { basicNodesPlugins } from '@/plate/demo/plugins/basicNodesPlugins';
-import { createMultiEditorsValue } from '@/plate/demo/values/createMultiEditorsValue';
-import { Plate } from '@udecode/plate-common';
 
-import { MyValue } from '@/types/plate-types';
+import { Plate, usePlateEditor } from '@udecode/plate/react';
 
-const initialValues = createMultiEditorsValue();
+import { createMultiEditorsValue } from '@/registry/default/example/values/multi-editors-value';
+import { Editor, EditorContainer } from '@/registry/default/plate-ui/editor';
 
-function WithPlate({ initialValue, id }: any) {
+const values = createMultiEditorsValue();
+
+function WithPlate({ id, value }: any) {
+  const editor = usePlateEditor({
+    id,
+    // override: { components: PlateUI },
+    // plugins: [BasicElementsPlugin, BasicMarksPlugin],
+    value,
+  });
+
   return (
-    <Plate<MyValue>
-      id={id}
-      editableProps={editableProps}
-      initialValue={initialValue}
-      plugins={basicNodesPlugins}
-    />
+    <Plate editor={editor}>
+      <EditorContainer>
+        <Editor spellCheck={false} />
+      </EditorContainer>
+    </Plate>
   );
 }
 
@@ -39,23 +46,19 @@ function WithPlate({ initialValue, id }: any) {
 //       value={value}
 //       onChange={useCallback((v) => setValue(v), [])}
 //     >
-//       <Editable renderElement={renderElement} {...(editableProps as any)} />
+//       <Editable renderElement={renderElement} />
 //     </Slate>
 //   );
 // }
 
-const styles = {
-  wrapper: { border: '1px solid black', marginBottom: '20px', padding: 4 },
-};
-
 export default function HundredsEditorsDemo() {
   return (
     <div className="flex flex-col">
-      {initialValues.map((initialValue, idx) => {
+      {values.map((value, idx) => {
         return (
-          <div style={styles.wrapper} key={idx}>
-            <div>{idx}</div>
-            <WithPlate initialValue={initialValue} id={idx + 1} />
+          <div key={idx} className="p-10">
+            <h3 className="mb-2 font-semibold">#{idx + 1}</h3>
+            <WithPlate id={idx + 1} value={value} />
             {/* <WithoutPlate initialValue={initialValue} id={idx} /> */}
           </div>
         );

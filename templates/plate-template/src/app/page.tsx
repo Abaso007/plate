@@ -1,46 +1,101 @@
-import Link from 'next/link';
+import Image from 'next/image';
 
-import { siteConfig } from '@/config/site';
-import { buttonVariants } from '@/components/ui/button';
-import Editor from '@/components/plate/editor';
-
-export default function IndexPage() {
+export default function Home() {
   return (
-    <section className="container grid items-center gap-6 pb-8 pt-6 md:py-10">
-      <div className="flex max-w-[980px] flex-col items-start gap-2">
-        <h1 className="text-3xl font-extrabold leading-tight tracking-tighter md:text-4xl">
-          Rich-text editor built with <br className="hidden sm:inline" />
-          Plate and shadcn/ui.
-        </h1>
-        <p className="max-w-[700px] text-lg text-muted-foreground">
-          Plugin system & primitive component library.{' '}
-          <br className="hidden sm:inline" />
-          CLI for styled components. Customizable. Open Source. And Next.js 13
-          Ready.
-        </p>
-      </div>
-      <div className="flex gap-4">
-        <Link
-          href={siteConfig.links.docs}
-          target="_blank"
-          rel="noreferrer"
-          className={buttonVariants()}
-        >
-          Documentation
-        </Link>
-        <Link
-          target="_blank"
-          rel="noreferrer"
-          href={siteConfig.links.github}
-          className={buttonVariants({ variant: 'outline' })}
-        >
-          GitHub
-        </Link>
-      </div>
+    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
+        <Image
+          className="dark:invert"
+          alt="Next.js logo"
+          height={38}
+          src="https://nextjs.org/icons/next.svg"
+          width={180}
+          priority
+        />
+        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
+          <li className="mb-2">
+            Get started by editing{' '}
+            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
+              app/page.tsx
+            </code>
+            .
+          </li>
+          <li>Save and see your changes instantly.</li>
+        </ol>
 
-      <div className="max-w-[1336px] rounded-lg border bg-background shadow">
-        <Editor />
-      </div>
-    </section>
+        <div className="flex gap-4 items-center flex-col sm:flex-row">
+          <a
+            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
+            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <Image
+              className="dark:invert"
+              alt="Vercel logomark"
+              height={20}
+              src="https://nextjs.org/icons/vercel.svg"
+              width={20}
+            />
+            Deploy now
+          </a>
+          <a
+            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
+            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Read our docs
+          </a>
+        </div>
+      </main>
+      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
+        <a
+          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
+          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          <Image
+            alt="File icon"
+            aria-hidden
+            height={16}
+            src="https://nextjs.org/icons/file.svg"
+            width={16}
+          />
+          Learn
+        </a>
+        <a
+          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
+          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          <Image
+            alt="Window icon"
+            aria-hidden
+            height={16}
+            src="https://nextjs.org/icons/window.svg"
+            width={16}
+          />
+          Examples
+        </a>
+        <a
+          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
+          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          <Image
+            alt="Globe icon"
+            aria-hidden
+            height={16}
+            src="https://nextjs.org/icons/globe.svg"
+            width={16}
+          />
+          Go to nextjs.org →
+        </a>
+      </footer>
+    </div>
   );
 }

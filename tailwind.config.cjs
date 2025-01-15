@@ -1,62 +1,124 @@
 const plugin = require('tailwindcss/plugin');
-const { fontFamily } = require('tailwindcss/defaultTheme');
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  content: ['src/**/*.{ts,tsx}'],
   darkMode: ['class'],
-  content: ['**/src/**/*.{ts,tsx}'],
+  plugins: [
+    require('tailwindcss-animate'),
+    require('tailwind-scrollbar-hide'),
+    require('@tailwindcss/typography'),
+    plugin(({ addVariant }) => {
+      addVariant('all', '& *');
+    }),
+  ],
   theme: {
     container: {
-      padding: '2rem',
       center: true,
+      padding: '2rem',
       screens: {
-        '2xl': '1400px',
+        '2xl': '1536px',
       },
     },
     extend: {
+      animation: {
+        'accordion-down': 'accordion-down 0.2s ease-out',
+        'accordion-up': 'accordion-up 0.2s ease-out',
+      },
+      borderRadius: {
+        lg: 'var(--radius)',
+        md: 'calc(var(--radius) - 2px)',
+        sm: 'calc(var(--radius) - 4px)',
+        xl: 'calc(var(--radius) + 4px)',
+      },
       colors: {
-        border: 'hsl(var(--border))',
-        input: 'hsl(var(--input))',
-        ring: 'hsl(var(--ring))',
-        background: 'hsl(var(--background))',
-        foreground: 'hsl(var(--foreground))',
-        primary: {
-          DEFAULT: 'hsl(var(--primary))',
-          foreground: 'hsl(var(--primary-foreground))',
-        },
-        secondary: {
-          DEFAULT: 'hsl(var(--secondary))',
-          foreground: 'hsl(var(--secondary-foreground))',
-        },
-        destructive: {
-          DEFAULT: 'hsl(var(--destructive) / <alpha-value>)',
-          foreground: 'hsl(var(--destructive-foreground) / <alpha-value>)',
-        },
-        muted: {
-          DEFAULT: 'hsl(var(--muted))',
-          foreground: 'hsl(var(--muted-foreground))',
-        },
         accent: {
           DEFAULT: 'hsl(var(--accent))',
           foreground: 'hsl(var(--accent-foreground))',
         },
-        popover: {
-          DEFAULT: 'hsl(var(--popover))',
-          foreground: 'hsl(var(--popover-foreground))',
+        background: 'hsl(var(--background))',
+        border: 'hsl(var(--border))',
+        brand: {
+          DEFAULT: 'hsl(var(--brand))',
+          foreground: 'hsl(var(--brand-foreground))',
         },
         card: {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
-      },
-      borderRadius: {
-        lg: `var(--radius)`,
-        md: `calc(var(--radius) - 2px)`,
-        sm: 'calc(var(--radius) - 4px)',
+        destructive: {
+          DEFAULT: 'hsl(var(--destructive) / <alpha-value>)',
+          foreground: 'hsl(var(--destructive-foreground) / <alpha-value>)',
+        },
+        foreground: 'hsl(var(--foreground))',
+        highlight: {
+          DEFAULT: 'hsl(var(--highlight))',
+          foreground: 'hsl(var(--highlight-foreground))',
+        },
+        input: 'hsl(var(--input))',
+        muted: {
+          DEFAULT: 'hsl(var(--muted))',
+          foreground: 'hsl(var(--muted-foreground))',
+        },
+        popover: {
+          DEFAULT: 'hsl(var(--popover))',
+          foreground: 'hsl(var(--popover-foreground))',
+        },
+        primary: {
+          DEFAULT: 'hsl(var(--primary))',
+          foreground: 'hsl(var(--primary-foreground))',
+        },
+        ring: 'hsl(var(--ring))',
+        secondary: {
+          DEFAULT: 'hsl(var(--secondary))',
+          foreground: 'hsl(var(--secondary-foreground))',
+        },
+        sidebar: {
+          DEFAULT: 'hsl(var(--sidebar-background))',
+          accent: 'hsl(var(--sidebar-accent))',
+          'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
+          border: 'hsl(var(--sidebar-border))',
+          foreground: 'hsl(var(--sidebar-foreground))',
+          primary: 'hsl(var(--sidebar-primary))',
+          'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
+          ring: 'hsl(var(--sidebar-ring))',
+        },
       },
       fontFamily: {
-        sans: ['var(--font-sans)', ...fontFamily.sans],
-        heading: ['var(--font-heading)', ...fontFamily.sans],
+        heading: [
+          'var(--font-heading)',
+          'ui-sans-serif',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          'Segoe UI Variable Display',
+          'Segoe UI',
+          'Helvetica',
+          'Apple Color Emoji',
+          'Arial',
+          'sans-serif',
+          'Segoe UI Emoji',
+          'Segoe UI Symbol',
+          'Noto Color Emoji',
+        ],
+        mono: [
+          'var(--font-mono)',
+          ...require('tailwindcss/defaultTheme').fontFamily.mono,
+        ],
+        sans: [
+          'var(--font-sans)',
+          'ui-sans-serif',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          'Segoe UI Variable Display',
+          'Segoe UI',
+          'Helvetica',
+          'Apple Color Emoji',
+          'Arial',
+          'sans-serif',
+          'Segoe UI Emoji',
+          'Segoe UI Symbol',
+          'Noto Color Emoji',
+        ],
       },
       keyframes: {
         'accordion-down': {
@@ -68,17 +130,21 @@ module.exports = {
           to: { height: '0' },
         },
       },
-      animation: {
-        'accordion-down': 'accordion-down 0.2s ease-out',
-        'accordion-up': 'accordion-up 0.2s ease-out',
+      screens: {
+        /**
+         * Matches devices where the primary pointing device is capable of
+         * hovering conveniently. Usage: main-hover:group-hover:bg-red-500 See:
+         * https://developer.mozilla.org/en-US/docs/Web/CSS/@media/hover
+         *
+         * On iOS devices, buttons inside a .group element that contains
+         * descendent elements with `group-hover:` CSS rules require two taps to
+         * click. As a workaround, we disable these rules on devices that cannot
+         * conveniently hover using `main-hover:`.
+         */
+        'main-hover': {
+          raw: '(hover: hover)',
+        },
       },
     },
   },
-  plugins: [
-    require('tailwindcss-animate'),
-    require('@tailwindcss/typography'),
-    plugin(({ addVariant }) => {
-      addVariant('all', '& *');
-    }),
-  ],
 };

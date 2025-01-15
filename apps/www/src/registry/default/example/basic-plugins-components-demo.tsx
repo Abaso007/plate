@@ -1,155 +1,135 @@
-import { createPlateUI } from '@/plate/create-plate-ui';
+'use client';
+
+import { withProps } from '@udecode/cn';
 import {
-  createBoldPlugin,
-  createCodePlugin,
-  createItalicPlugin,
-  createStrikethroughPlugin,
-  createUnderlinePlugin,
-} from '@udecode/plate-basic-marks';
-import { createBlockquotePlugin } from '@udecode/plate-block-quote';
-import { createCodeBlockPlugin } from '@udecode/plate-code-block';
-import { createPlugins, Plate } from '@udecode/plate-common';
-import { createHeadingPlugin } from '@udecode/plate-heading';
-import { createParagraphPlugin } from '@udecode/plate-paragraph';
+  Plate,
+  PlateElement,
+  PlateLeaf,
+  usePlateEditor,
+} from '@udecode/plate/react';
+import {
+  BoldPlugin,
+  CodePlugin,
+  ItalicPlugin,
+  UnderlinePlugin,
+} from '@udecode/plate-basic-marks/react';
+import { BlockquotePlugin } from '@udecode/plate-block-quote/react';
+import { HeadingPlugin } from '@udecode/plate-heading/react';
 
-import { MyValue } from '@/types/plate-types';
-
-const plugins = createPlugins<MyValue>(
-  [
-    createParagraphPlugin(),
-    createBlockquotePlugin(),
-    createCodeBlockPlugin(),
-    createHeadingPlugin(),
-
-    createBoldPlugin(),
-    createItalicPlugin(),
-    createUnderlinePlugin(),
-    createStrikethroughPlugin(),
-    createCodePlugin(),
-  ],
-  {
-    components: createPlateUI(),
-  }
-);
+import { Editor, EditorContainer } from '@/registry/default/plate-ui/editor';
 
 export default function BasicPluginsComponentsDemo() {
+  const editor = usePlateEditor({
+    override: {
+      components: {
+        blockquote: withProps(PlateElement, {
+          as: 'blockquote',
+          className: 'mb-4 border-l-4 border-[#d0d7de] pl-4 text-[#636c76]',
+        }),
+        bold: withProps(PlateLeaf, { as: 'strong' }),
+        h1: withProps(PlateElement, {
+          as: 'h1',
+          className:
+            'mb-4 mt-6 text-3xl font-semibold tracking-tight lg:text-4xl',
+        }),
+        h2: withProps(PlateElement, {
+          as: 'h2',
+          className: 'mb-4 mt-6 text-2xl font-semibold tracking-tight',
+        }),
+        h3: withProps(PlateElement, {
+          as: 'h3',
+          className: 'mb-4 mt-6 text-xl font-semibold tracking-tight',
+        }),
+        italic: withProps(PlateLeaf, { as: 'em' }),
+        p: withProps(PlateElement, {
+          as: 'p',
+          className: 'mb-4',
+        }),
+        underline: withProps(PlateLeaf, { as: 'u' }),
+      },
+    },
+    plugins: [
+      BlockquotePlugin,
+      HeadingPlugin,
+      BoldPlugin,
+      ItalicPlugin,
+      UnderlinePlugin,
+      CodePlugin,
+    ],
+    value: basicEditorValue,
+  });
+
   return (
-    <Plate<MyValue>
-      editableProps={{
-        spellCheck: false,
-        autoFocus: false,
-        placeholder: 'Type…',
-        style: {
-          outline: 'none',
-        },
-      }}
-      initialValue={basicEditorValue}
-      plugins={plugins}
-    />
+    <Plate editor={editor}>
+      <EditorContainer>
+        <Editor placeholder="Type..." autoFocus={false} spellCheck={false} />
+      </EditorContainer>
+    </Plate>
   );
 }
 
-export const basicEditorValue: MyValue = [
+export const basicEditorValue = [
   {
-    type: 'h1',
+    id: '1',
     children: [
       {
         text: '🌳 Blocks',
       },
     ],
-    id: '1',
+    type: 'h1',
   },
   {
-    type: 'p',
+    id: '2',
     children: [
       {
         text: 'Easily create headings of various levels, from H1 to H6, to structure your content and make it more organized.',
       },
     ],
-    id: '2',
+    type: 'p',
   },
   {
-    type: 'blockquote',
+    id: '3',
     children: [
       {
         text: 'Create blockquotes to emphasize important information or highlight quotes from external sources.',
       },
     ],
-    id: '3',
+    type: 'blockquote',
   },
   {
-    type: 'code_block',
-    lang: 'javascript',
-    children: [
-      {
-        type: 'code_line',
-        children: [
-          {
-            text: '// Use code blocks to showcase code snippets',
-          },
-        ],
-      },
-      {
-        type: 'code_line',
-        children: [
-          {
-            text: 'function greet() {',
-          },
-        ],
-      },
-      {
-        type: 'code_line',
-        children: [
-          {
-            text: "  console.info('Hello World!');",
-          },
-        ],
-      },
-      {
-        type: 'code_line',
-        children: [
-          {
-            text: '}',
-          },
-        ],
-      },
-    ],
-    id: '4',
-  },
-  {
-    type: 'h1',
+    id: '1',
     children: [
       {
         text: '🌱 Marks',
       },
     ],
-    id: '1',
+    type: 'h1',
   },
   {
-    type: 'p',
+    id: '2',
     children: [
       {
         text: 'Add style and emphasis to your text using the mark plugins, which offers a variety of formatting options.',
       },
     ],
-    id: '2',
+    type: 'p',
   },
   {
-    type: 'p',
+    id: '3',
     children: [
       {
         text: 'Make text ',
       },
       {
-        text: 'bold',
         bold: true,
+        text: 'bold',
       },
       {
         text: ', ',
       },
       {
-        text: 'italic',
         italic: true,
+        text: 'italic',
       },
       {
         text: ', ',
@@ -162,70 +142,15 @@ export const basicEditorValue: MyValue = [
         text: ', or apply a ',
       },
       {
-        text: 'combination',
         bold: true,
         italic: true,
+        text: 'combination',
         underline: true,
       },
       {
         text: ' of these styles for a visually striking effect.',
       },
     ],
-    id: '3',
-  },
-  {
     type: 'p',
-    children: [
-      {
-        text: 'Add ',
-      },
-      {
-        text: 'strikethrough',
-        strikethrough: true,
-      },
-      {
-        text: ' to indicate deleted or outdated content.',
-      },
-    ],
-    id: '4',
-  },
-  {
-    type: 'p',
-    children: [
-      {
-        text: 'Write code snippets with inline ',
-      },
-      {
-        text: 'code',
-        code: true,
-      },
-      {
-        text: ' formatting for easy readability.',
-      },
-    ],
-    id: '5',
-  },
-  {
-    type: 'p',
-    children: [
-      {
-        text: 'Press ',
-      },
-      {
-        text: '⌘+B',
-        kbd: true,
-      },
-      {
-        text: ' to apply bold mark or ',
-      },
-      {
-        text: '⌘+I',
-        kbd: true,
-      },
-      {
-        text: ' for italic mark.',
-      },
-    ],
-    id: '6',
   },
 ];

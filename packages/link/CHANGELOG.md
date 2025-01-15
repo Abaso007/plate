@@ -1,5 +1,247 @@
 # @udecode/plate-link
 
+## 42.0.0
+
+## 41.0.0
+
+### Patch Changes
+
+- [#3830](https://github.com/udecode/plate/pull/3830) by [@felixfeng33](https://github.com/felixfeng33) – Move `node.props` plugin attributes from `/react` to `/`
+
+- [#3830](https://github.com/udecode/plate/pull/3830) by [@felixfeng33](https://github.com/felixfeng33) –
+  - Fix floating link url input being focused when focusing the placeholder input
+
+## 40.0.0
+
+## 39.1.9
+
+### Patch Changes
+
+- [#3630](https://github.com/udecode/plate/pull/3630) by [@natamox](https://github.com/natamox) – Fixed the problem that the LinkFloatingToolbar disappears when clicking anywhere when inserting a link
+
+## 39.1.7
+
+### Patch Changes
+
+- [`847741091a554231db7bd98d4ed1d75557e68a38`](https://github.com/udecode/plate/commit/847741091a554231db7bd98d4ed1d75557e68a38) by [@zbeyens](https://github.com/zbeyens) – Fix type
+
+## 39.1.6
+
+### Patch Changes
+
+- [#3622](https://github.com/udecode/plate/pull/3622) by [@zbeyens](https://github.com/zbeyens) –
+  - Fix floating link insert
+  - Hide floating link edit when clicking outside
+
+## 39.1.4
+
+### Patch Changes
+
+- [#3616](https://github.com/udecode/plate/pull/3616) by [@zbeyens](https://github.com/zbeyens) – Floating patch
+
+## 39.1.1
+
+### Patch Changes
+
+- [#3609](https://github.com/udecode/plate/pull/3609) by [@sakshikale14](https://github.com/sakshikale14) – Fixed floating link issue #3609
+
+## 39.0.0
+
+## 38.0.6
+
+### Patch Changes
+
+- [`f26ed56053b14e697fea2e6a7e33a73ce28593e4`](https://github.com/udecode/plate/commit/f26ed56053b14e697fea2e6a7e33a73ce28593e4) by [@12joan](https://github.com/12joan) – Add the `target` attribute to `dangerouslyAllowAttributes` for LinkPlugin
+
+## 38.0.1
+
+### Patch Changes
+
+- [#3526](https://github.com/udecode/plate/pull/3526) by [@zbeyens](https://github.com/zbeyens) – Prefix base plugin with `Base`
+
+## 38.0.0
+
+## 37.0.3
+
+## 37.0.0
+
+### Major Changes
+
+- [#3420](https://github.com/udecode/plate/pull/3420) by [@zbeyens](https://github.com/zbeyens) –
+  - `createLinkPlugin` -> `LinkPlugin`
+  - Move `floatingLinkStore` to `LinkPlugin`
+
+## 36.5.6
+
+## 36.4.0
+
+### Patch Changes
+
+- [`8342b6c2f333ee445c8b6be7e864857fd2a2584a`](https://github.com/udecode/plate/commit/8342b6c2f333ee445c8b6be7e864857fd2a2584a) by [@zbeyens](https://github.com/zbeyens) – fix: Potential uncaught error when immediately dismounting the floating link input after update
+
+## 36.3.8
+
+## 36.3.2
+
+## 36.3.0
+
+### Minor Changes
+
+- [#3389](https://github.com/udecode/plate/pull/3389) by [@georeith](https://github.com/georeith) – feat:`LinkPlugin` new option `transformInput: (url: string) => string | undefined;` that optionally transform's the
+  submitted URL provided by the user to the URL input before validation.
+
+## 36.0.0
+
+## 35.2.0
+
+### Patch Changes
+
+- [#3317](https://github.com/udecode/plate/pull/3317) by [@12joan](https://github.com/12joan) – Handle unencoded URLs in floating URL input
+
+## 34.1.1
+
+## 34.0.6
+
+## 34.0.1
+
+## 34.0.0
+
+### Patch Changes
+
+- [#3241](https://github.com/udecode/plate/pull/3241) by [@felixfeng33](https://github.com/felixfeng33) – Fix link button closing the floating toolbar.
+
+## 33.0.5
+
+### Patch Changes
+
+- [#3204](https://github.com/udecode/plate/pull/3204) by [@jijiseong](https://github.com/jijiseong) – Fix zIndex of floating link
+
+## 33.0.3
+
+## 33.0.2
+
+### Patch Changes
+
+- [#3187](https://github.com/udecode/plate/pull/3187) by [@zbeyens](https://github.com/zbeyens) – Fix types
+
+## 33.0.0
+
+## 32.0.0
+
+## 31.0.0
+
+## 30.9.4
+
+### Patch Changes
+
+- [#3036](https://github.com/udecode/plate/pull/3036) by [@Zum-Gluck](https://github.com/Zum-Gluck) – fix #2526,the url and text not cleaned up in time
+
+## 30.9.2
+
+### Patch Changes
+
+- [#3022](https://github.com/udecode/plate/pull/3022) by [@Zum-Gluck](https://github.com/Zum-Gluck) – Fixes #2526
+
+## 30.5.3
+
+### Patch Changes
+
+- [`4cbed7159`](https://github.com/udecode/plate/commit/4cbed7159d51f7427051686e45bcf2a8899aeede) by [@zbeyens](https://github.com/zbeyens) – Move `@udecode/plate-common` to peerDeps to fix a bug when multiple instances were installed
+
+## 30.5.2
+
+## 30.4.5
+
+## 30.1.2
+
+## 30.0.0
+
+## 29.1.0
+
+## 29.0.1
+
+## 29.0.0
+
+## 28.0.0
+
+### Patch Changes
+
+- [#2816](https://github.com/udecode/plate/pull/2816) by [@12joan](https://github.com/12joan) –
+  - Replace `useEdtiorState` with `useEditorSelector`
+
+## 27.0.3
+
+## 27.0.0
+
+### Patch Changes
+
+- [#2763](https://github.com/udecode/plate/pull/2763) by [@12joan](https://github.com/12joan) – Update Zustood imports
+
+## 26.0.4
+
+## 25.0.1
+
+## 25.0.0
+
+## 24.5.2
+
+## 24.5.1
+
+### Patch Changes
+
+- [#2705](https://github.com/udecode/plate/pull/2705) by [@AndreyMarchuk](https://github.com/AndreyMarchuk) – Fix: "Cannot resolve a DOM node from Slate node" floating link case
+
+## 24.4.0
+
+### Minor Changes
+
+- [#2675](https://github.com/udecode/plate/pull/2675) by [@zbeyens](https://github.com/zbeyens) – Support slate-react 0.99.0
+
+## 24.3.6
+
+## 24.3.5
+
+## 24.3.2
+
+## 24.3.1
+
+## 24.3.0
+
+## 24.2.0
+
+## 24.0.2
+
+## 24.0.1
+
+## 24.0.0
+
+## 23.7.4
+
+## 23.7.0
+
+## 23.6.0
+
+## 23.5.0
+
+### Minor Changes
+
+- [#2585](https://github.com/udecode/plate/pull/2585) by [@zbeyens](https://github.com/zbeyens) – `LinkFloatingToolbar`:
+
+  - soft br: `useVirtualFloatingLink` removed `placement` and `middleware` default values from floating options.
+  - refactor: `useFloatingLinkEdit` and `useFloatingLinkEditState`
+  - refactor: `useFloatingLinkInsert` and `useFloatingLinkInsertState`
+  - feat: `useFloatingLinkInsert` return new field: `hidden`
+
+## 23.4.0
+
+### Patch Changes
+
+- [#2579](https://github.com/udecode/plate/pull/2579) by [@zbeyens](https://github.com/zbeyens) – Add missing dependency `@udecode/plate-floating`
+
+## 23.3.1
+
+## 23.3.0
+
 ## 22.0.2
 
 ## 22.0.1

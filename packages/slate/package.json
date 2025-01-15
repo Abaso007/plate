@@ -1,27 +1,39 @@
 {
   "name": "@udecode/slate",
-  "version": "22.0.2",
+  "version": "42.0.3",
   "description": "Slate extension",
-  "license": "MIT",
+  "keywords": [
+    "slate"
+  ],
   "homepage": "https://platejs.org",
+  "bugs": {
+    "url": "https://github.com/udecode/plate/issues"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/udecode/plate.git",
     "directory": "packages/slate"
   },
-  "bugs": {
-    "url": "https://github.com/udecode/plate/issues"
+  "license": "MIT",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "module": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
   },
   "main": "dist/index.js",
-  "module": "dist/index.es.js",
-  "files": [
-    "dist"
-  ],
+  "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*"
+  ],
   "scripts": {
+    "brl": "yarn p:brl",
     "build": "yarn p:build",
     "build:watch": "yarn p:build:watch",
-    "brl": "yarn p:brl",
     "clean": "yarn p:clean",
     "lint": "yarn p:lint",
     "lint:fix": "yarn p:lint:fix",
@@ -30,15 +42,12 @@
     "typecheck": "yarn p:typecheck"
   },
   "dependencies": {
-    "@udecode/utils": "19.7.1"
+    "@udecode/utils": "42.0.0",
+    "is-plain-object": "^5.0.0",
+    "lodash": "^4.17.21",
+    "slate": "0.112.0",
+    "slate-dom": "0.111.0"
   },
-  "peerDependencies": {
-    "slate": ">=0.94.0",
-    "slate-history": ">=0.93.0"
-  },
-  "keywords": [
-    "slate"
-  ],
   "publishConfig": {
     "access": "public"
   }

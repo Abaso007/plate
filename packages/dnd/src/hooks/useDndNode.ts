@@ -1,68 +1,82 @@
-import { useState } from 'react';
-import { TEditor, usePlateEditorRef } from '@udecode/plate-common';
-import { DropTargetMonitor } from 'react-dnd';
-import { getEmptyImage } from 'react-dnd-html5-backend';
+import { useEffect } from 'react';
+import { NativeTypes, getEmptyImage } from 'react-dnd-html5-backend';
 
-import { DragItemNode, DropLineDirection } from '../types';
-import { useDragNode, UseDragNodeOptions } from './useDragNode';
-import { useDropNode, UseDropNodeOptions } from './useDropNode';
+import type { ConnectDragSource, DropTargetMonitor } from 'react-dnd';
 
-export interface UseDndNodeOptions
-  extends Pick<UseDropNodeOptions, 'id' | 'nodeRef'>,
-    Pick<UseDragNodeOptions, 'type'> {
-  drag?: UseDragNodeOptions;
-  drop?: UseDropNodeOptions;
-  onDropHandler?: (
-    editor: TEditor,
-    props: {
-      monitor: DropTargetMonitor<DragItemNode, unknown>;
-      dragItem: DragItemNode;
-      nodeRef: any;
-      id: string;
-    }
-  ) => boolean;
-  preview?: {
-    /**
-     * Whether to disable the preview.
-     */
-    disable?: boolean;
+import { type PlateEditor, useEditorRef } from '@udecode/plate/react';
 
-    /**
-     * The reference to the preview element.
-     */
-    ref?: any;
+import type { DragItemNode } from '../types';
+
+import { DRAG_ITEM_BLOCK, DndPlugin } from '../DndPlugin';
+import { type UseDragNodeOptions, useDragNode } from './useDragNode';
+import { type UseDropNodeOptions, useDropNode } from './useDropNode';
+
+export type UseDndNodeOptions = Partial<
+  Pick<UseDropNodeOptions, 'canDropNode' | 'id' | 'nodeRef'>
+> &
+  Partial<Pick<UseDragNodeOptions, 'type'>> & {
+    preview?: {
+      /** Whether to disable the preview. */
+      disable?: boolean;
+
+      /** The reference to the preview element. */
+      ref?: any;
+    };
+
+    /** Options passed to the drag hook. */
+    drag?: Partial<Omit<UseDragNodeOptions, 'type'>>;
+
+    /** Options passed to the drop hook, excluding id, nodeRef. */
+    drop?: Partial<Omit<UseDropNodeOptions, 'canDropNode' | 'id' | 'nodeRef'>>;
+
+    /** Orientation of the drag and drop interaction. */
+    orientation?: 'horizontal' | 'vertical';
+
+    onDropHandler?: (
+      editor: PlateEditor,
+      props: {
+        id: string;
+        dragItem: DragItemNode;
+        monitor: DropTargetMonitor<DragItemNode, unknown>;
+        nodeRef: any;
+      }
+    ) => boolean;
   };
-}
 
 /**
- * {@link useDragNode} and {@link useDropNode} hooks to drag and drop a node from the editor.
- * A default preview is used to show the node being dragged, which can be customized or removed.
- * Returns the drag ref and drop line direction.
+ * {@link useDragNode} and {@link useDropNode} hooks to drag and drop a node from
+ * the editor. A default preview is used to show the node being dragged, which
+ * can be customized or removed. Returns the drag ref and drop line direction.
  */
 export const useDndNode = ({
-  id,
-  type,
-  nodeRef,
-  preview: previewOptions = {},
+  id = '',
+  canDropNode,
   drag: dragOptions,
   drop: dropOptions,
+  nodeRef,
+  orientation = 'vertical',
+  preview: previewOptions = {},
+  type = DRAG_ITEM_BLOCK,
   onDropHandler,
-}: UseDndNodeOptions) => {
-  const editor = usePlateEditorRef();
-
-  const [dropLine, setDropLine] = useState<DropLineDirection>('');
+}: UseDndNodeOptions): {
+  dragRef: ConnectDragSource;
+  isDragging: boolean;
+  isOver: boolean;
+} => {
+  const editor = useEditorRef();
 
   const [{ isDragging }, dragRef, preview] = useDragNode(editor, {
     id,
     type,
     ...dragOptions,
   });
+
   const [{ isOver }, drop] = useDropNode(editor, {
-    accept: type,
     id,
+    accept: [type, NativeTypes.FILE],
+    canDropNode,
     nodeRef,
-    dropLine,
-    onChangeDropLine: setDropLine,
+    orientation,
     onDropHandler,
     ...dropOptions,
   });
@@ -77,14 +91,15 @@ export const useDndNode = ({
     preview(drop(nodeRef));
   }
 
-  if (!isOver && dropLine) {
-    setDropLine('');
-  }
+  useEffect(() => {
+    if (!isOver && editor.getOptions(DndPlugin).dropTarget?.id) {
+      editor.setOption(DndPlugin, 'dropTarget', { id: null, line: '' });
+    }
+  }, [isOver, editor]);
 
   return {
+    dragRef,
     isDragging,
     isOver,
-    dropLine,
-    dragRef,
   };
 };

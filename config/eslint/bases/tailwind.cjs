@@ -1,14 +1,12 @@
 /**
  * Opinionated config base for projects using react.
+ *
  * @see https://github.com/belgattitude/nextjs-monorepo-example/tree/main/packages/eslint-config-bases
  */
 
-const reactPatterns = {
-  files: ['*.{jsx,tsx}'],
-};
-
 /**
  * Fine-tune naming convention react typescript jsx (function components)
+ *
  * @link https://github.com/typescript-eslint/typescript-eslint/blob/main/packages/eslint-plugin/docs/rules/naming-convention.md
  */
 
@@ -18,11 +16,6 @@ module.exports = {
     es6: true,
     node: true,
   },
-  settings: {
-    tailwindcss: {
-      callees: ['cn', 'cva'],
-    },
-  },
   extends: [
     // @see https://github.com/francoismassart/eslint-plugin-tailwindcss,
     'plugin:tailwindcss/recommended',
@@ -30,7 +23,28 @@ module.exports = {
   rules: {
     // Tailwind css classnames order
     'tailwindcss/classnames-order': 'warn',
-    'tailwindcss/no-custom-classname': 'error',
+    'tailwindcss/no-custom-classname': [
+      'error',
+      {
+        whitelist: [
+          'ignore-click-outside/toolbar',
+          'chunk-mode',
+          'preview',
+          'toaster',
+          'typography',
+          'step',
+          'steps',
+          'line',
+        ],
+      },
+    ],
+  },
+  settings: {
+    tailwindcss: {
+      callees: ['cn', 'cva', 'withCn', 'className'],
+
+      cssFiles: [],
+    },
   },
   // overrides: [
   //   {

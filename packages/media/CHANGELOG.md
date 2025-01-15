@@ -1,5 +1,305 @@
 # @udecode/plate-media
 
+## 42.1.1
+
+### Patch Changes
+
+- [#3974](https://github.com/udecode/plate/pull/3974) by [@felixfeng33](https://github.com/felixfeng33) – Remove useless html parser.
+
+## 42.0.5
+
+### Patch Changes
+
+- [#3943](https://github.com/udecode/plate/pull/3943) by [@felixfeng33](https://github.com/felixfeng33) – Support deserialization from PlateStatic.
+
+## 42.0.0
+
+## 41.0.0
+
+## 40.2.7
+
+### Patch Changes
+
+- [#3809](https://github.com/udecode/plate/pull/3809) by [@zbeyens](https://github.com/zbeyens) – Fix README
+
+## 40.2.4
+
+### Patch Changes
+
+- [#3796](https://github.com/udecode/plate/pull/3796) by [@siosio34](https://github.com/siosio34) – fix: `parseTwitterUrl`
+
+## 40.2.3
+
+### Patch Changes
+
+- [#3790](https://github.com/udecode/plate/pull/3790) by [@felixfeng33](https://github.com/felixfeng33) – Fix editor crash when inserting media into an empty paragraph.
+
+## 40.2.1
+
+### Patch Changes
+
+- [#3784](https://github.com/udecode/plate/pull/3784) by [@felixfeng33](https://github.com/felixfeng33) – Fix the issue where pasting DOCX text triggers image uploads.
+
+- [#3782](https://github.com/udecode/plate/pull/3782) by [@felixfeng33](https://github.com/felixfeng33) – Fix error message.
+
+## 40.2.0
+
+### Minor Changes
+
+- [#3753](https://github.com/udecode/plate/pull/3753) by [@felixfeng33](https://github.com/felixfeng33) – PlaceholderPlugin:
+  New `updateUploadHistory` `withHistoryMark` `isHistoryMarking` to fix undo to the loading state.
+  `editor.insert.insertMedia` add options
+
+  New option `disableEmptyPlaceholder` to hidden empty placeholder.
+
+  Rename `disabledDndPlugin` to `disableFileDrop`
+
+## 40.0.0
+
+## 39.3.3
+
+### Patch Changes
+
+- [#3728](https://github.com/udecode/plate/pull/3728) by [@felixfeng33](https://github.com/felixfeng33) – Fix can't drop
+
+## 39.3.2
+
+### Patch Changes
+
+- [#3725](https://github.com/udecode/plate/pull/3725) by [@felixfeng33](https://github.com/felixfeng33) – `insertMedia`: Should insert in the current block if it is empty.
+
+## 39.3.1
+
+### Patch Changes
+
+- [#3723](https://github.com/udecode/plate/pull/3723) by [@felixfeng33](https://github.com/felixfeng33) – Add `at` in `insertMedia` api.
+
+## 39.3.0
+
+### Minor Changes
+
+- [#3708](https://github.com/udecode/plate/pull/3708) by [@felixfeng33](https://github.com/felixfeng33) – ImagePlugin:
+
+  - New `initialHeight` and `initialWidth` in `TImageElement` This will display a loading placeholder while the image is still loading, which helps maintain a consistent height.
+  - New Api: editor.insert.imageFromFiles
+
+  PlaceholderPlugin:
+
+  - Mew `placeholderId` Used to track what was converted from that placeholder plugin.
+  - New `insertMedia` Used for inserting the placeholder at once.
+  - New `validateFiles` utils for validate the files meet the `mediaConfig`.
+    - If validation fails,stop insert placeholder and save the error message in uploadErrorMessage.
+  - New `option.multiple` `maxFileCount` Used to limit the number of placeholders inserted.
+  - New `option.disable` `disabledDndPlugin` Used to using the browser drop.
+  - New `error` use `editor.useOption` to watch and display a toast message.
+
+## 39.2.13
+
+### Patch Changes
+
+- [`03708f9823d240db78cd9ef9206bff98c6de0488`](https://github.com/udecode/plate/commit/03708f9823d240db78cd9ef9206bff98c6de0488) by [@zbeyens](https://github.com/zbeyens) – Remove `escape` handler
+
+## 39.2.4
+
+### Patch Changes
+
+- [#3653](https://github.com/udecode/plate/pull/3653) by [@felixfeng33](https://github.com/felixfeng33) – Fix scrollbar issue.
+
+## 39.2.0
+
+### Minor Changes
+
+- [#3644](https://github.com/udecode/plate/pull/3644) by [@felixfeng33](https://github.com/felixfeng33) – Add `editor.tf.insert.audioPlaceholder`, `editor.tf.insert.filePlaceholder`, `editor.tf.insert.imagePlaceholder`, `editor.tf.insert.videoPlaceholder`
+
+## 39.0.0
+
+## 38.0.6
+
+### Patch Changes
+
+- [`d30471cb19577e53c20944ab66eab2a7ef3b3ad2`](https://github.com/udecode/plate/commit/d30471cb19577e53c20944ab66eab2a7ef3b3ad2) by [@12joan](https://github.com/12joan) – Add the following attributes to `dangerouslyAllowAttributes`:
+
+  - ImagePlugin: `alt`, `width`, `height`
+  - VideoPlugin: `width`, `height`
+
+## 38.0.1
+
+### Patch Changes
+
+- [#3526](https://github.com/udecode/plate/pull/3526) by [@zbeyens](https://github.com/zbeyens) – Prefix base plugin with `Base`
+
+## 38.0.0
+
+## 37.0.0
+
+### Major Changes
+
+- [#3420](https://github.com/udecode/plate/pull/3420) by [@zbeyens](https://github.com/zbeyens) –
+  - `createMediaPlugin` -> `MediaPlugin`
+  - `FloatingMediaUrlInput`, `submitFloatingMedia` rename option `pluginKey` -> `plugin`
+  - `insertMediaEmbed` remove `key` option
+
+## 36.5.3
+
+### Patch Changes
+
+- [#3446](https://github.com/udecode/plate/pull/3446) by [@felixfeng33](https://github.com/felixfeng33) – fix: typo `insertFilePlaceholer` => `insertFilePlaceholder`.
+
+## 36.2.2
+
+### Patch Changes
+
+- [#3380](https://github.com/udecode/plate/pull/3380) by [@Tassil0](https://github.com/Tassil0) – feat: `parseTwitterUrl` accept x.com
+
+## 36.2.0
+
+### Minor Changes
+
+- [#3384](https://github.com/udecode/plate/pull/3384) by [@12joan](https://github.com/12joan) – Remove default `align` from `useMediaState`, allowing components to choose their own default `align`
+
+## 36.0.10
+
+### Patch Changes
+
+- [`1bc0971774fbfb770780c9bdb94746a6f0f196a0`](https://github.com/udecode/plate/commit/1bc0971774fbfb770780c9bdb94746a6f0f196a0) by [@12joan](https://github.com/12joan) –
+  - Require the `url` property returned from URL parsers passed to `useMediaState` to be a valid URL and have protocol `https:` or `http:`, if present.
+  - In the return value of `useMediaState`, rename `url` to `unsafeUrl` to indicate that it has not been sanitised.
+
+## 36.0.0
+
+## 34.1.0
+
+### Minor Changes
+
+- [#3289](https://github.com/udecode/plate/pull/3289) by [@felixfeng33](https://github.com/felixfeng33) – Add image preview
+
+## 34.0.2
+
+### Patch Changes
+
+- [#3253](https://github.com/udecode/plate/pull/3253) by [@hakimLyon](https://github.com/hakimLyon) – Fix: useMediaState
+
+## 34.0.0
+
+### Minor Changes
+
+- [#3241](https://github.com/udecode/plate/pull/3241) by [@felixfeng33](https://github.com/felixfeng33) – Add plugins: `mediaPlaceholder`, `video`,`audio` and `file`
+
+## 33.0.2
+
+### Patch Changes
+
+- [#3187](https://github.com/udecode/plate/pull/3187) by [@zbeyens](https://github.com/zbeyens) – Fix types
+
+## 33.0.0
+
+## 32.0.0
+
+## 31.0.0
+
+## 30.5.3
+
+### Patch Changes
+
+- [`4cbed7159`](https://github.com/udecode/plate/commit/4cbed7159d51f7427051686e45bcf2a8899aeede) by [@zbeyens](https://github.com/zbeyens) – Move `@udecode/plate-common` to peerDeps to fix a bug when multiple instances were installed
+
+## 30.4.5
+
+## 30.1.2
+
+## 30.0.0
+
+## 29.1.0
+
+## 29.0.1
+
+## 29.0.0
+
+## 28.0.0
+
+## 27.0.3
+
+## 27.0.0
+
+### Patch Changes
+
+- [#2763](https://github.com/udecode/plate/pull/2763) by [@12joan](https://github.com/12joan) – Update Zustood imports
+
+## 25.0.1
+
+## 25.0.0
+
+### Patch Changes
+
+- [#2719](https://github.com/udecode/plate/pull/2719) by [@12joan](https://github.com/12joan) – Pass additional options given to insertMedia to insertImage or insertMediaEmbed
+
+## 24.5.2
+
+## 24.4.0
+
+### Minor Changes
+
+- [#2675](https://github.com/udecode/plate/pull/2675) by [@zbeyens](https://github.com/zbeyens) – Support slate-react 0.99.0
+
+## 24.3.6
+
+## 24.3.5
+
+## 24.3.2
+
+## 24.3.1
+
+## 24.3.0
+
+## 24.2.0
+
+## 24.0.2
+
+## 24.0.1
+
+## 24.0.0
+
+## 23.7.4
+
+## 23.7.0
+
+## 23.6.0
+
+## 23.3.1
+
+## 23.3.0
+
+## 23.0.0
+
+### Major Changes
+
+- [#2537](https://github.com/udecode/plate/pull/2537) by [@haydencarlson](https://github.com/haydencarlson) – `MediaEmbedElement` is now more headless with a smaller bundle size.
+  Update the following components:
+
+  - `npx @udecode/plate-ui@latest add media-embed-element`
+    - now uses `react-lite-youtube-embed` for YouTube videos.
+    - now uses `react-tweet` for Twitter tweets.
+  - `npx @udecode/plate-ui@latest add image-element`
+
+  Breaking changes:
+
+  - Moved `Resizable` to `@udecode/plate-resizable`
+  - Moved `Caption`, `CaptionTextarea` to `@udecode/plate-caption`
+  - Removed `useMediaEmbed`, `MediaEmbedVideo`, `MediaEmbedTweet`, `Tweet`, `parseMediaUrl`, `mediaStore`
+  - Removed `@udecode/resizable`, `scriptjs`, `react-textarea-autosize` dependencies
+  - `MediaPlugin`
+    - removed `rules`. Use `parsers` option instead.
+    - removed `disableCaption`. Use `createCaptionPlugin` instead.
+  - Caption is now a separate plugin. Install `@udecode/plate-caption` and add it to your plugins:
+
+  ```ts
+  import { ELEMENT_IMAGE, ELEMENT_MEDIA_EMBED } from '@udecode/plate-media';
+
+  createCaptionPlugin({
+    options: { pluginKeys: [ELEMENT_IMAGE, ELEMENT_MEDIA_EMBED] },
+  });
+  ```
+
 ## 22.0.2
 
 ## 22.0.1
@@ -231,14 +531,12 @@
   interface MediaPlugin {
     isUrl?: (text: string) => boolean;
 
-    /**
-     * Transforms the url.
-     */
+    /** Transforms the url. */
     transformUrl?: (url: string) => string;
 
     /**
-     * List of rules. The first rule that matches the url will be used,
-     * i.e. its component will be used to render the media. Used by `MediaEmbed`.
+     * List of rules. The first rule that matches the url will be used, i.e. its
+     * component will be used to render the media. Used by `MediaEmbed`.
      */
     rules?: MediaPluginRule[];
   }

@@ -1,5 +1,248 @@
 # @udecode/plate-indent-list
 
+## 42.1.1
+
+### Patch Changes
+
+- [#3974](https://github.com/udecode/plate/pull/3974) by [@felixfeng33](https://github.com/felixfeng33) – Remove useless html parser.
+
+## 42.0.5
+
+### Patch Changes
+
+- [#3943](https://github.com/udecode/plate/pull/3943) by [@felixfeng33](https://github.com/felixfeng33) – Support deserialization from PlateStatic.
+
+## 42.0.1
+
+### Patch Changes
+
+- [#3948](https://github.com/udecode/plate/pull/3948) by [@zbeyens](https://github.com/zbeyens) – Fix merging and renumbering of lists when deleting empty paragraphs between them (both backward and forward deletion)
+
+## 42.0.0
+
+## 41.0.10
+
+### Patch Changes
+
+- [#3918](https://github.com/udecode/plate/pull/3918) by [@felixfeng33](https://github.com/felixfeng33) – `someIndentList` support multiple type
+
+## 41.0.0
+
+### Major Changes
+
+- [#3830](https://github.com/udecode/plate/pull/3830) by [@felixfeng33](https://github.com/felixfeng33) –
+  - Move `render.belowNodes` from `IndentListPlugin` to `BaseIndentListPlugin`. Props type for `listStyleTypes.liComponent` and `listStyleTypes.markerComponent` options is now `SlateRenderElementProps` instead of `PlateRenderElementProps`
+  - Move `someIndentList`, `someIndentTodo` from `@udecode/plate-indent-list/react` to `@udecode/plate-indent-list`
+
+### Patch Changes
+
+- [#3830](https://github.com/udecode/plate/pull/3830) by [@felixfeng33](https://github.com/felixfeng33) – Replace `findNodePath` with `findPath`
+
+- [#3868](https://github.com/udecode/plate/pull/3868) by [@zbeyens](https://github.com/zbeyens) – Fix todo list: insert break should inherit format
+
+## 40.0.0
+
+## 39.1.10
+
+### Patch Changes
+
+- [#3632](https://github.com/udecode/plate/pull/3632) by [@natamox](https://github.com/natamox) – Fix the problem that the sequence number does not continue when inserting a line break in the listRestart node.
+
+## 39.0.0
+
+## 38.0.10
+
+### Patch Changes
+
+- [#3576](https://github.com/udecode/plate/pull/3576) by [@felixfeng33](https://github.com/felixfeng33) – Fix cursor possition issue.
+
+## 38.0.1
+
+### Patch Changes
+
+- [#3526](https://github.com/udecode/plate/pull/3526) by [@zbeyens](https://github.com/zbeyens) – Prefix base plugin with `Base`
+
+## 38.0.0
+
+## 37.0.0
+
+### Major Changes
+
+- [#3420](https://github.com/udecode/plate/pull/3420) by [@zbeyens](https://github.com/zbeyens) –
+  - `createIndentListPlugin` -> `IndentListPlugin`
+  - Rename `injectIndentListComponent` to `renderIndentListBelowNodes`
+  - Replace `normalizeIndentList` with `withNormalizeIndentList`
+  - Replace `deleteBackwardIndentList` with `withDeleteBackwardIndentList`
+  - Replace `insertBreakIndentList` with `withInsertBreakIndentList`
+  - Remove types: `LiFC` (use `PlateRenderElementProps`), `MarkerFC` (use `Omit<PlateRenderElementProps, 'children'>`)
+
+## 36.5.2
+
+## 36.3.3
+
+### Patch Changes
+
+- [#3395](https://github.com/udecode/plate/pull/3395) by [@tomdyqin](https://github.com/tomdyqin) – fix: missing `getSiblingIndentListOptions`
+
+## 36.0.1
+
+### Patch Changes
+
+- [#3341](https://github.com/udecode/plate/pull/3341) by [@felixfeng33](https://github.com/felixfeng33) – Fix(#3340): When working on an indent list todo item with a text child, pressing enter while the cursor is located inside the text creates an additional empty todo list item inside list and after that creates an item with the splitted text
+
+## 36.0.0
+
+## 34.0.0
+
+### Patch Changes
+
+- [#3241](https://github.com/udecode/plate/pull/3241) by [@felixfeng33](https://github.com/felixfeng33) – Add `toggleIndentListByPath`, add `indentList` options
+
+## 33.0.3
+
+## 33.0.2
+
+## 33.0.0
+
+## 32.0.1
+
+### Patch Changes
+
+- [#3164](https://github.com/udecode/plate/pull/3164) by [@felixfeng33](https://github.com/felixfeng33) – Fix: clicking the checkbox removing the focus
+
+## 32.0.0
+
+## 31.4.3
+
+### Patch Changes
+
+- [#3140](https://github.com/udecode/plate/pull/3140) by [@felixfeng33](https://github.com/felixfeng33) – The behivor abnormal when deleting back to empty list item or quote
+
+## 31.4.0
+
+### Patch Changes
+
+- [#3118](https://github.com/udecode/plate/pull/3118) by [@felixfeng33](https://github.com/felixfeng33) – Missing exports
+
+## 31.2.2
+
+### Patch Changes
+
+- [#3077](https://github.com/udecode/plate/pull/3077) by [@felixfeng33](https://github.com/felixfeng33) – Fix ordered list regression.
+
+## 31.2.0
+
+### Minor Changes
+
+- [#3073](https://github.com/udecode/plate/pull/3073) by [@felixfeng33](https://github.com/felixfeng33) – Add listStyleTypes option to custom indent list
+
+## 31.1.3
+
+## 31.1.2
+
+### Patch Changes
+
+- [#3067](https://github.com/udecode/plate/pull/3067) by [@felixfeng33](https://github.com/felixfeng33) – remove data-slate-void
+
+## 31.1.1
+
+### Patch Changes
+
+- [#3066](https://github.com/udecode/plate/pull/3066) by [@felixfeng33](https://github.com/felixfeng33) – fix pressing Arrow Up the cursor abnormal
+
+## 31.1.0
+
+### Minor Changes
+
+- [#3058](https://github.com/udecode/plate/pull/3058) by [@felixfeng33](https://github.com/felixfeng33) – Feature: todo lists
+
+## 31.0.0
+
+## 30.5.3
+
+### Patch Changes
+
+- [`4cbed7159`](https://github.com/udecode/plate/commit/4cbed7159d51f7427051686e45bcf2a8899aeede) by [@zbeyens](https://github.com/zbeyens) – Move `@udecode/plate-common` to peerDeps to fix a bug when multiple instances were installed
+
+## 30.5.2
+
+### Patch Changes
+
+- [#2961](https://github.com/udecode/plate/pull/2961) by [@zbeyens](https://github.com/zbeyens) – Move `@udecode/plate-common` to peerDeps to fix a bug when multiple instances were installed
+
+## 30.4.5
+
+## 30.1.2
+
+## 30.0.1
+
+### Patch Changes
+
+- [#2873](https://github.com/udecode/plate/pull/2873) by [@zbeyens](https://github.com/zbeyens) – fix someIndentList: handle the case when editor.selection is null
+
+## 30.0.0
+
+## 29.1.0
+
+## 29.0.1
+
+## 29.0.0
+
+## 28.0.0
+
+### Patch Changes
+
+- [#2816](https://github.com/udecode/plate/pull/2816) by [@12joan](https://github.com/12joan) –
+  - Replace `useEdtiorState` with `useEditorSelector`
+
+## 27.0.3
+
+## 27.0.0
+
+## 25.0.1
+
+## 25.0.0
+
+## 24.5.2
+
+## 24.4.0
+
+### Minor Changes
+
+- [#2675](https://github.com/udecode/plate/pull/2675) by [@zbeyens](https://github.com/zbeyens) – Support slate-react 0.99.0
+
+## 24.3.6
+
+## 24.3.5
+
+## 24.3.2
+
+## 24.3.1
+
+## 24.3.0
+
+## 24.2.0
+
+## 24.0.2
+
+## 24.0.1
+
+## 24.0.0
+
+## 23.7.4
+
+## 23.7.2
+
+## 23.7.0
+
+## 23.6.0
+
+## 23.3.1
+
+## 23.3.0
+
+## 23.2.0
+
 ## 22.0.2
 
 ## 22.0.1

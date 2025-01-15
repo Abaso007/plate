@@ -1,88 +1,61 @@
-import React, { useMemo, useState } from 'react';
-import { editableProps } from '@/plate/demo/editableProps';
-import { plateUI } from '@/plate/demo/plateUI';
-import { basicNodesPlugins } from '@/plate/demo/plugins/basicNodesPlugins';
-import { findReplaceValue } from '@/plate/demo/values/findReplaceValue';
-import { Plate } from '@udecode/plate-common';
-import { createFindReplacePlugin } from '@udecode/plate-find-replace';
+'use client';
 
-import { createMyPlugins, MyValue } from '@/types/plate-types';
-import { Icons } from '@/components/icons';
+import React from 'react';
+
+import { Plate, useEditorPlugin } from '@udecode/plate/react';
+import { FindReplacePlugin } from '@udecode/plate-find-replace';
+
+import { editorPlugins } from '@/registry/default/components/editor/plugins/editor-plugins';
+import { useCreateEditor } from '@/registry/default/components/editor/use-create-editor';
+import { findReplaceValue } from '@/registry/default/example/values/find-replace-value';
+import { Editor, EditorContainer } from '@/registry/default/plate-ui/editor';
 import { FixedToolbar } from '@/registry/default/plate-ui/fixed-toolbar';
+import { Input } from '@/registry/default/plate-ui/input';
+import { SearchHighlightLeaf } from '@/registry/default/plate-ui/search-highlight-leaf';
 
-export interface SearchHighlightToolbarProps {
-  icon: any;
-  setSearch: any;
-}
+export function FindToolbar() {
+  const { editor, setOption, useOption } = useEditorPlugin(FindReplacePlugin);
+  const search = useOption('search');
 
-export function SearchHighlightToolbar({
-  icon: Icon,
-  setSearch,
-}: SearchHighlightToolbarProps) {
   return (
-    <FixedToolbar className="h-[38px]">
-      <div
-        style={{
-          position: 'relative',
-          paddingBottom: '10px',
-          marginBottom: '10px',
+    <FixedToolbar className="border-none py-3">
+      <Input
+        data-testid="ToolbarSearchHighlightInput"
+        className="mx-2"
+        value={search}
+        onChange={(e) => {
+          setOption('search', e.target.value);
+          editor.api.redecorate();
         }}
-      >
-        <Icon
-          size={18}
-          style={{
-            position: 'absolute',
-            top: '0.5em',
-            left: '0.5em',
-            color: '#ccc',
-          }}
-        />
-        <input
-          data-testid="ToolbarSearchHighlightInput"
-          type="search"
-          placeholder="Search the text..."
-          onChange={(e) => setSearch(e.target.value)}
-          style={{
-            boxSizing: 'border-box',
-            fontSize: '0.85em',
-            width: '100%',
-            padding: '0.5em',
-            paddingLeft: '2em',
-            border: '2px solid #ddd',
-            background: '#fafafa',
-          }}
-        />
-      </div>
+        placeholder="Search the text..."
+        type="search"
+      />
     </FixedToolbar>
   );
 }
 
 export default function FindReplaceDemo() {
-  const [search, setSearch] = useState('');
-
-  const plugins = useMemo(
-    () =>
-      createMyPlugins(
-        [
-          ...basicNodesPlugins,
-          createFindReplacePlugin({ options: { search } }),
-        ],
-        {
-          components: plateUI,
-        }
-      ),
-    [search]
+  const editor = useCreateEditor(
+    {
+      components: {
+        [FindReplacePlugin.key]: SearchHighlightLeaf,
+      },
+      plugins: [
+        ...editorPlugins,
+        FindReplacePlugin.configure({ options: { search: 'text' } }),
+      ],
+      value: findReplaceValue,
+    },
+    []
   );
 
   return (
-    <>
-      <SearchHighlightToolbar icon={Icons.search} setSearch={setSearch} />
+    <Plate editor={editor}>
+      <FindToolbar />
 
-      <Plate<MyValue>
-        editableProps={editableProps}
-        plugins={plugins}
-        initialValue={findReplaceValue}
-      />
-    </>
+      <EditorContainer variant="demo" className="border-t">
+        <Editor />
+      </EditorContainer>
+    </Plate>
   );
 }

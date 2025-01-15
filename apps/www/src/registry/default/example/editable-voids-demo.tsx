@@ -1,97 +1,81 @@
 'use client';
 
-import React, { CSSProperties, useState } from 'react';
-import { editableProps } from '@/plate/demo/editableProps';
-import { plateUI } from '@/plate/demo/plateUI';
-import { basicNodesPlugins } from '@/plate/demo/plugins/basicNodesPlugins';
-import { exitBreakPlugin } from '@/plate/demo/plugins/exitBreakPlugin';
-import { resetBlockTypePlugin } from '@/plate/demo/plugins/resetBlockTypePlugin';
-import { softBreakPlugin } from '@/plate/demo/plugins/softBreakPlugin';
-import { editableVoidsValue } from '@/plate/demo/values/editableVoidsValue';
-import { createBasicElementsPlugin } from '@udecode/plate-basic-elements';
-import {
-  createExitBreakPlugin,
-  createSoftBreakPlugin,
-} from '@udecode/plate-break';
-import {
-  createPluginFactory,
-  Plate,
-  PlateRenderElementProps,
-  TElement,
-} from '@udecode/plate-common';
-import { createResetNodePlugin } from '@udecode/plate-reset-node';
+import React, { useState } from 'react';
 
-import { createMyPlugins, MyEditor, MyValue } from '@/types/plate-types';
+import type { PlateRenderElementProps } from '@udecode/plate/react';
 
-export const ELEMENT_EDITABLE_VOID = 'editable-void';
+import { Plate, createPlatePlugin } from '@udecode/plate/react';
 
-export const createEditableVoidPlugin = createPluginFactory({
-  key: ELEMENT_EDITABLE_VOID,
-  isElement: true,
-  isVoid: true,
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { editorPlugins } from '@/registry/default/components/editor/plugins/editor-plugins';
+import { useCreateEditor } from '@/registry/default/components/editor/use-create-editor';
+import { editableVoidsValue } from '@/registry/default/example/values/editable-voids-value';
+import { Editor, EditorContainer } from '@/registry/default/plate-ui/editor';
+import { Input } from '@/registry/default/plate-ui/input';
+import { Label } from '@/registry/default/plate-ui/label';
+
+export const EditableVoidPlugin = createPlatePlugin({
+  key: 'editable-void',
+  node: {
+    component: EditableVoidElement,
+    isElement: true,
+    isVoid: true,
+  },
 });
-
-const editableVoidPlugins = createMyPlugins(
-  [
-    createBasicElementsPlugin(),
-    createResetNodePlugin(resetBlockTypePlugin),
-    createSoftBreakPlugin(softBreakPlugin),
-    createExitBreakPlugin(exitBreakPlugin),
-  ],
-  {
-    components: plateUI,
-  }
-);
-const styles: Record<string, CSSProperties> = {
-  box: { boxShadow: '0 0 0 3px #ddd', padding: '8px' },
-  input: { margin: '8px 0' },
-  radio: { width: 'unset' },
-  editor: { padding: '20px', border: '2px solid #ddd' },
-};
 
 export function EditableVoidElement({
   attributes,
   children,
-}: PlateRenderElementProps<MyValue, TElement>) {
+}: PlateRenderElementProps) {
   const [inputValue, setInputValue] = useState('');
+
+  const editor = useCreateEditor({
+    plugins: editorPlugins,
+  });
 
   return (
     // Need contentEditable=false or Firefox has issues with certain input types.
     <div {...attributes} contentEditable={false}>
-      <div style={styles.box}>
-        <h4>Name:</h4>
-        <input
-          style={styles.input}
-          type="text"
+      <div className="mt-2 grid gap-6 rounded-md border p-6 shadow">
+        <Input
+          id="name"
+          className="my-2"
           value={inputValue}
           onChange={(e) => {
             setInputValue(e.target.value);
           }}
+          placeholder="Name"
+          type="text"
         />
-        <h4>Left or right handed:</h4>
-        <input
-          style={styles.radio}
-          type="radio"
-          name="handedness"
-          value="left"
-        />{' '}
-        Left
-        <br />
-        <input
-          style={styles.radio}
-          type="radio"
-          name="handedness"
-          value="right"
-        />{' '}
-        Right
-        <h4>Tell us about yourself:</h4>
-        <div style={styles.editor}>
-          <Plate<MyValue, MyEditor>
-            id="editable-void-basic-elements"
-            plugins={editableVoidPlugins}
-            editableProps={editableProps}
+
+        <div className="grid w-full max-w-sm items-center gap-2">
+          <Label htmlFor="handed">Left or right handed:</Label>
+
+          <RadioGroup id="handed" defaultValue="r1">
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem id="r1" value="r1" />
+              <Label htmlFor="r1">Left</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem id="r2" value="r2" />
+              <Label htmlFor="r2">Right</Label>
+            </div>
+          </RadioGroup>
+        </div>
+
+        <div className="grid gap-2">
+          <Label htmlFor="editable-void-basic-elements">
+            Tell us about yourself:
+          </Label>
+
+          <Plate
+            editor={editor}
             // initialValue={basicElementsValue}
-          />
+          >
+            <EditorContainer>
+              <Editor />
+            </EditorContainer>
+          </Plate>
         </div>
       </div>
       {children}
@@ -99,24 +83,17 @@ export function EditableVoidElement({
   );
 }
 
-const plugins = createMyPlugins(
-  [
-    ...basicNodesPlugins,
-    createEditableVoidPlugin({
-      component: EditableVoidElement,
-    }),
-  ],
-  {
-    components: plateUI,
-  }
-);
-
 export default function EditableVoidsDemo() {
+  const editor = useCreateEditor({
+    plugins: [...editorPlugins, EditableVoidPlugin],
+    value: editableVoidsValue,
+  });
+
   return (
-    <Plate<MyValue>
-      editableProps={editableProps}
-      plugins={plugins}
-      initialValue={editableVoidsValue}
-    />
+    <Plate editor={editor}>
+      <EditorContainer>
+        <Editor />
+      </EditorContainer>
+    </Plate>
   );
 }

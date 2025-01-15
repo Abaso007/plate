@@ -1,8 +1,10 @@
-import { TEditor, Value } from '@udecode/plate-common';
-import { DragSourceHookSpec, useDrag } from 'react-dnd';
+import { type DragSourceHookSpec, useDrag } from 'react-dnd';
 
-import { dndStore } from '../dndStore';
-import { DragItemNode } from '../types';
+import type { PlateEditor } from '@udecode/plate/react';
+
+import type { DragItemNode } from '../types';
+
+import { DndPlugin } from '../DndPlugin';
 
 export interface UseDragNodeOptions
   extends DragSourceHookSpec<DragItemNode, unknown, { isDragging: boolean }> {
@@ -13,25 +15,34 @@ export interface UseDragNodeOptions
  * `useDrag` hook to drag a node from the editor. `item` with `id` is required.
  *
  * On drag start:
- * - set `editor.isDragging` to true
- * - add `dragging` class to `body`
+ *
+ * - Set `isDragging` to true
+ * - Add `dragging` class to `body`
  *
  * On drag end:
- * - set `editor.isDragging` to false
- * - remove `dragging` class to `body`
+ *
+ * - Set `isDragging` to false
+ * - Remove `dragging` class to `body`
  *
  * Collect:
- * - isDragging: true if mouse is dragging the block
+ *
+ * - IsDragging: true if mouse is dragging the block
  */
-export const useDragNode = <V extends Value>(
-  editor: TEditor<V>,
+export const useDragNode = (
+  editor: PlateEditor,
   { id, item, ...options }: UseDragNodeOptions
 ) => {
   return useDrag<DragItemNode, unknown, { isDragging: boolean }>(
     () => ({
+      collect: (monitor) => ({
+        isDragging: monitor.isDragging(),
+      }),
+      end: () => {
+        editor.setOption(DndPlugin, 'isDragging', false);
+        document.body.classList.remove('dragging');
+      },
       item(monitor) {
-        dndStore.set.isDragging(true);
-        editor.isDragging = true;
+        editor.setOption(DndPlugin, 'isDragging', true);
         document.body.classList.add('dragging');
 
         const _item = typeof item === 'function' ? item(monitor) : item;
@@ -41,14 +52,6 @@ export const useDragNode = <V extends Value>(
           editorId: editor.id,
           ..._item,
         };
-      },
-      collect: (monitor) => ({
-        isDragging: monitor.isDragging(),
-      }),
-      end: () => {
-        dndStore.set.isDragging(false);
-        editor.isDragging = false;
-        document.body.classList.remove('dragging');
       },
       ...options,
     }),

@@ -1,22 +1,30 @@
+'use client';
+
 import React from 'react';
-import { editableProps } from '@/plate/demo/editableProps';
-import { Plate } from '@udecode/plate-common';
 
-import { MyParagraphElement, MyValue } from '@/types/plate-types';
+import { Plate, usePlateEditor } from '@udecode/plate/react';
 
-const initialValue = [
+import { Editor, EditorContainer } from '@/registry/default/plate-ui/editor';
+
+const value = [
   {
-    type: 'p',
     children: [
       {
         text: 'This is editable plain text with react and history plugins, just like a <textarea>!',
       },
     ],
-  } as MyParagraphElement,
+    type: 'p',
+  },
 ];
 
 export default function BasicEditorValueDemo() {
+  const editor = usePlateEditor({ value });
+
   return (
-    <Plate<MyValue> editableProps={editableProps} initialValue={initialValue} />
+    <Plate editor={editor}>
+      <EditorContainer>
+        <Editor />
+      </EditorContainer>
+    </Plate>
   );
 }

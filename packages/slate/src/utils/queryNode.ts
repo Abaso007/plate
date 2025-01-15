@@ -1,14 +1,31 @@
-import castArray from 'lodash/castArray';
+import type { NodeEntry, TNode } from '../interfaces';
 
-import { TNode, TNodeEntry } from '../interfaces';
-import { QueryNodeOptions } from '../types/QueryNodeOptions';
+function castArray<T>(value: T | T[]): T[] {
+  return Array.isArray(value) ? value : [value];
+}
 
-/**
- * Query the node entry.
- */
+/** Filter nodes. */
+export interface QueryNodeOptions {
+  /** List of types that are valid. If empty or undefined - allow all. */
+  allow?: string[] | string | null;
+
+  /** List of types that are invalid. */
+  exclude?: string[] | string | null;
+
+  /** Query the node entry. */
+  filter?: <N extends TNode>(entry: NodeEntry<N>) => boolean;
+
+  /** Valid path levels. */
+  level?: number[] | number | null;
+
+  /** Paths above that value are invalid. */
+  maxLevel?: number | null;
+}
+
+/** Query the node entry. */
 export const queryNode = <N extends TNode>(
-  entry?: TNodeEntry<N>,
-  { filter, allow, exclude, level, maxLevel }: QueryNodeOptions = {}
+  entry?: NodeEntry<N>,
+  { allow, exclude, filter, level, maxLevel }: QueryNodeOptions = {}
 ) => {
   if (!entry) return false;
 
@@ -21,15 +38,12 @@ export const queryNode = <N extends TNode>(
       return false;
     }
   }
-
   if (maxLevel && path.length > maxLevel) {
     return false;
   }
-
   if (filter && !filter(entry)) {
     return false;
   }
-
   if (allow) {
     const allows = castArray(allow);
 
@@ -37,7 +51,6 @@ export const queryNode = <N extends TNode>(
       return false;
     }
   }
-
   if (exclude) {
     const excludes = castArray(exclude);
 

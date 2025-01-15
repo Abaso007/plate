@@ -1,20 +1,23 @@
 'use client';
 
 import React from 'react';
+
+import { cn } from '@udecode/cn';
+import { useEditorPlugin } from '@udecode/plate/react';
 import {
   CommentNewSubmitButton,
   CommentNewTextarea,
-  useCommentsSelectors,
-} from '@udecode/plate-comments';
+  CommentsPlugin,
+} from '@udecode/plate-comments/react';
 
-import { cn } from '@/lib/utils';
-import { buttonVariants } from '@/components/plate-ui/button';
-import { inputVariants } from '@/components/plate-ui/input';
-
+import { buttonVariants } from './button';
 import { CommentAvatar } from './comment-avatar';
+import { inputVariants } from './input';
 
 export function CommentCreateForm() {
-  const myUserId = useCommentsSelectors().myUserId();
+  const { useOption } = useEditorPlugin(CommentsPlugin);
+
+  const myUserId = useOption('myUserId');
 
   return (
     <div className="flex w-full space-x-2">
