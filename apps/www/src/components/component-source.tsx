@@ -2,29 +2,55 @@
 
 import * as React from 'react';
 
-import { cn } from '@/lib/utils';
+import { cn } from '@udecode/cn';
+
+import { useCopyToClipboard } from '@/hooks/use-copy-to-clipboard';
+import { Button } from '@/registry/default/plate-ui/button';
 
 import { CodeBlockWrapper } from './code-block-wrapper';
 
 interface ComponentSourceProps extends React.HTMLAttributes<HTMLDivElement> {
-  src: string;
-  open?: boolean;
   name?: string;
+  open?: boolean;
+  src?: string;
+  title?: string;
 }
 
 export function ComponentSource({
   children,
-  name,
   className,
+  name,
+  src,
+  title,
   ...props
 }: ComponentSourceProps) {
+  const displaySrc = title ?? src?.split('/').pop() ?? name + '.tsx';
+  const { copyToClipboard } = useCopyToClipboard();
+
   return (
-    <CodeBlockWrapper
-      expandButtonTitle={name || 'Expand'}
-      className={cn('my-6 overflow-hidden rounded-md', className)}
-      {...props}
-    >
-      {children}
-    </CodeBlockWrapper>
+    <div className="mt-4 mb-6">
+      {displaySrc && (
+        <Button
+          size="none"
+          variant="ghost"
+          className="mb-0.5 w-fit px-4 py-1 text-sm font-medium text-foreground select-auto"
+          onClick={() => {
+            copyToClipboard(displaySrc, {
+              tooltip: 'Copied to clipboard',
+            });
+          }}
+        >
+          {displaySrc}
+        </Button>
+      )}
+
+      <CodeBlockWrapper
+        className={cn('overflow-hidden rounded-md', className)}
+        expandButtonTitle="Expand"
+        {...props}
+      >
+        {children}
+      </CodeBlockWrapper>
+    </div>
   );
 }

@@ -1,19 +1,24 @@
 'use client';
 
-import { TooltipProvider } from '@/registry/default/plate-ui/tooltip';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+
+import { Provider as JotaiProvider } from 'jotai';
 
 import { ThemeProvider } from './theme-provider';
 
-export function Providers({ children }) {
+export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-      <TooltipProvider
-        disableHoverableContent
-        delayDuration={500}
-        skipDelayDuration={0}
+    <JotaiProvider>
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="light"
+        disableTransitionOnChange
+        enableColorScheme
+        enableSystem
       >
-        {children}
-      </TooltipProvider>
-    </ThemeProvider>
+        <DndProvider backend={HTML5Backend}>{children}</DndProvider>
+      </ThemeProvider>
+    </JotaiProvider>
   );
 }

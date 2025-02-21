@@ -1,58 +1,52 @@
 'use client';
 
 import React from 'react';
-import {
-  TCommentText,
-  useCommentLeaf,
-  useCommentLeafState,
-} from '@udecode/plate-comments';
-import { PlateLeaf, PlateLeafProps, Value } from '@udecode/plate-common';
 
+import { cn } from '@udecode/cn';
+import { type TCommentText, getCommentCount } from '@udecode/plate-comments';
+import {
+  type PlateLeafProps,
+  PlateLeaf,
+  useEditorPlugin,
+  usePluginOption,
+} from '@udecode/plate/react';
+
+import { commentsPlugin } from '@/registry/default/components/editor/plugins/comments-plugin';
 export function CommentLeaf({
   className,
   ...props
-}: PlateLeafProps<Value, TCommentText>) {
-  const { children, nodeProps, leaf } = props;
+}: PlateLeafProps<TCommentText>) {
+  const { children, leaf, nodeProps } = props;
 
-  const state = useCommentLeafState({ leaf });
-  const { props: rootProps } = useCommentLeaf(state);
+  const { api, setOption } = useEditorPlugin(commentsPlugin);
+  const hoverId = usePluginOption(commentsPlugin, 'hoverId');
+  const activeId = usePluginOption(commentsPlugin, 'activeId');
 
-  // hide resolved comments
-  if (!state.commentCount) return <>{children}</>;
-
-  let aboveChildren = <>{children}</>;
-
-  const backgroundColor = state.isActive
-    ? 'rgb(255, 212, 0)'
-    : 'rgba(255, 212, 0, 0.14)';
-
-  if (!state.isActive) {
-    for (let i = 1; i < state.commentCount; i++) {
-      aboveChildren = (
-        <span
-          style={{
-            backgroundColor: 'rgba(255, 212, 0, 0.14)',
-          }}
-        >
-          {aboveChildren}
-        </span>
-      );
-    }
-  }
+  const isOverlapping = getCommentCount(leaf) > 1;
+  const currentId = api.comment.nodeId(leaf);
+  const isActive = activeId === currentId;
+  const isHover = hoverId === currentId;
 
   return (
     <PlateLeaf
       {...props}
+      className={cn(
+        'border-b-2 border-b-highlight/[.36] bg-highlight/[.13] transition-colors duration-200',
+        (isHover || isActive) && 'border-b-highlight bg-highlight/25',
+        isOverlapping && 'border-b-2 border-b-highlight/[.7] bg-highlight/25',
+        (isHover || isActive) &&
+          isOverlapping &&
+          'border-b-highlight bg-highlight/45',
+        className
+      )}
+      onClick={() => setOption('activeId', currentId ?? null)}
+      onMouseEnter={() => setOption('hoverId', currentId ?? null)}
+      onMouseLeave={() => setOption('hoverId', null)}
       nodeProps={{
-        ...rootProps,
-        style: {
-          backgroundColor,
-          borderBottom: '2px solid rgb(255, 212, 0)',
-        },
         ...nodeProps,
       }}
     >
-      {aboveChildren}
+      {children}
     </PlateLeaf>
   );
 }

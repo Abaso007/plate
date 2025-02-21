@@ -1,27 +1,20 @@
 'use client';
 
-import React from 'react';
-import { DropdownMenuProps } from '@radix-ui/react-dropdown-menu';
+import type { DropdownMenuProps } from '@radix-ui/react-dropdown-menu';
+
 import {
   useColorDropdownMenu,
   useColorDropdownMenuState,
-} from '@udecode/plate-font';
+} from '@udecode/plate-font/react';
 
+import { DEFAULT_COLORS, DEFAULT_CUSTOM_COLORS } from './color-constants';
+import { ColorPicker } from './color-picker';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from '@/registry/default/plate-ui/dropdown-menu';
-import { ToolbarButton } from '@/registry/default/plate-ui/toolbar';
-
-import { DEFAULT_COLORS, DEFAULT_CUSTOM_COLORS } from './color-constants';
-import { ColorPicker } from './color-picker';
-
-export type TColor = {
-  name: string;
-  value: string;
-  isBrightColor: boolean;
-};
+} from './dropdown-menu';
+import { ToolbarButton } from './toolbar';
 
 type ColorDropdownMenuProps = {
   nodeType: string;
@@ -29,18 +22,18 @@ type ColorDropdownMenuProps = {
 } & DropdownMenuProps;
 
 export function ColorDropdownMenu({
+  children,
   nodeType,
   tooltip,
-  children,
 }: ColorDropdownMenuProps) {
   const state = useColorDropdownMenuState({
-    nodeType,
+    closeOnSelect: true,
     colors: DEFAULT_COLORS,
     customColors: DEFAULT_CUSTOM_COLORS,
-    closeOnSelect: true,
+    nodeType,
   });
 
-  const { menuProps, buttonProps } = useColorDropdownMenu(state);
+  const { buttonProps, menuProps } = useColorDropdownMenu(state);
 
   return (
     <DropdownMenu modal={false} {...menuProps}>
@@ -53,11 +46,11 @@ export function ColorDropdownMenu({
       <DropdownMenuContent align="start">
         <ColorPicker
           color={state.selectedColor || state.color}
+          clearColor={state.clearColor}
           colors={state.colors}
           customColors={state.customColors}
           updateColor={state.updateColorAndClose}
           updateCustomColor={state.updateColor}
-          clearColor={state.clearColor}
         />
       </DropdownMenuContent>
     </DropdownMenu>

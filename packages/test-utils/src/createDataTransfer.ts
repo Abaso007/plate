@@ -1,6 +1,6 @@
-export type DataTransferDataType = 'text/plain' | 'text/html' | string;
-
 export type DataTransferDataMap = Map<DataTransferDataType, unknown>;
+
+export type DataTransferDataType = string | 'text/html' | 'text/plain';
 
 export const createDataTransfer = (dataMap: DataTransferDataMap = new Map()) =>
   ({
