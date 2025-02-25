@@ -10,16 +10,6 @@ Plate
   <a target="_blank" href="https://discord.gg/mAZRuBzGM3"><img src="https://img.shields.io/badge/chat-on%20discord-7289da.svg?sanitize=true" /></a>
   <a target="_blank" href="https://github.com/udecode/plate/blob/main/LICENSE"><img src="https://badgen.now.sh/badge/license/MIT" /></a>
 </div>
-<div align="center">
-<a href="https://console.algora.io/org/Udecode/bounties/new">
-<img style="border-radius: 100px;" height="24" src="https://img.shields.io/static/v1?labelColor=grey&color=6366f1&label=Algora&message=%F0%9F%92%8E+Bounty+issues&style=for-the-badge" alt="Udecode">
-</a>
-
-</div>
-<div align="center">
-  <a href="https://vercel.com/?utm_source=udecode&utm_campaign=oss"><img height="24" src="https://styled-icons.dev/powered-by-vercel.svg" alt="Powered by Vercel" /></a>
-</div>
-</p>
 
 ![hero](apps/www/public/og.png)
 
@@ -31,16 +21,23 @@ Plate
 [//]: # '3. **Primitives**: Besides the headless plugins, we also provide primitive hooks and components built on top of [Radix UI](https://www.radix-ui.com/). These are **unstyled** and accessible parts for making great design systems.'
 [//]: # '4. **Components**: We know a good-looking start is important. So, we give you components created with Plate CLI and [shadcn/ui](https://ui.shadcn.com/). Use these as a starting point to create your own component library.'
 
+## Templates
+
+You can choose one of the following templates to get started:
+
+| Option                                                                            | Plate | Plugins | AI  | Backend |
+| --------------------------------------------------------------------------------- | ----- | ------- | --- | ------- |
+| [Notion-like template](https://pro.platejs.org/docs/templates/potion)             | ✅    | ✅      | ✅  | ✅      |
+| [Plate playground template](https://github.com/udecode/plate-playground-template) | ✅    | ✅      | ✅  |         |
+| [Plate minimal template](https://github.com/udecode/plate-template)               | ✅    |         |     |         |
+
 ## Documentation
 
 You can learn more about Plate by checking out our [documentation](https://platejs.org/docs).
 
 ## Contributing
 
-### Ideas and discussions
-
-[Discussions](https://github.com/udecode/plate/discussions) is the best
-place for bringing opinions and contributions. Your feedback and contributions are welcome and will help us ensure that we are heading in the right direction with the project.
+To get started, check out our [contributing guide](tooling/CONTRIBUTING.md).
 
 ### Contributors
 
@@ -48,4 +45,4 @@ We'd love for you to join us! Whether it's through giving us a 🌟 star, making
 
 [![Star History Chart](https://api.star-history.com/svg?repos=udecode/plate&type=Date)](https://star-history.com/#udecode/plate&Date)
 
-To get started, check out our [contributing guide](CONTRIBUTING.md). Need more help? Join us on [Discord](https://discord.gg/mAZRuBzGM3). We're always here to guide you.
+Need more help? Join us on [Discord](https://discord.gg/mAZRuBzGM3). We're always here to guide you.

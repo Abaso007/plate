@@ -2,65 +2,72 @@
 
 import React from 'react';
 
-import { cn } from '@/lib/utils';
-import { buttonVariants } from '@/components/plate-ui/button';
-import { DropdownMenuItem } from '@/components/plate-ui/dropdown-menu';
-import { Separator } from '@/components/plate-ui/separator';
+import { cn, withRef } from '@udecode/cn';
+import { EraserIcon } from 'lucide-react';
 
-import { TColor } from './color-dropdown-menu';
-import { ColorDropdownMenuItems } from './color-dropdown-menu-items';
-import { ColorsCustom } from './colors-custom';
+import {
+  type TColor,
+  ColorDropdownMenuItems,
+} from './color-dropdown-menu-items';
+import { ColorCustom } from './colors-custom';
+import { DropdownMenuGroup, DropdownMenuItem } from './dropdown-menu';
 
-type ColorPickerProps = {
-  color?: string;
-  colors: TColor[];
-  customColors: TColor[];
-  updateColor: (color: string) => void;
-  updateCustomColor: (color: string) => void;
-  clearColor: () => void;
-} & React.HTMLAttributes<HTMLDivElement>;
-
-export function ColorPickerContent({
-  color,
-  colors,
-  customColors,
-  updateColor,
-  updateCustomColor,
-  clearColor,
-  className,
-  ...props
-}: ColorPickerProps) {
-  return (
-    <div className={cn('flex flex-col gap-4 p-4', className)} {...props}>
-      <ColorsCustom
-        color={color}
-        colors={colors}
-        customColors={customColors}
-        updateColor={updateColor}
-        updateCustomColor={updateCustomColor}
-      />
-
-      <Separator />
-
-      <ColorDropdownMenuItems
-        color={color}
-        colors={colors}
-        updateColor={updateColor}
-      />
-      {color && (
-        <DropdownMenuItem
-          className={buttonVariants({
-            variant: 'outline',
-            isMenu: true,
-          })}
-          onClick={clearColor}
-        >
-          Clear
-        </DropdownMenuItem>
-      )}
-    </div>
-  );
-}
+export const ColorPickerContent = withRef<
+  'div',
+  {
+    colors: TColor[];
+    customColors: TColor[];
+    clearColor: () => void;
+    updateColor: (color: string) => void;
+    updateCustomColor: (color: string) => void;
+    color?: string;
+  }
+>(
+  (
+    {
+      className,
+      clearColor,
+      color,
+      colors,
+      customColors,
+      updateColor,
+      updateCustomColor,
+      ...props
+    },
+    ref
+  ) => {
+    return (
+      <div ref={ref} className={cn('flex flex-col', className)} {...props}>
+        <DropdownMenuGroup label="Custom Colors">
+          <ColorCustom
+            color={color}
+            className="px-2"
+            colors={colors}
+            customColors={customColors}
+            updateColor={updateColor}
+            updateCustomColor={updateCustomColor}
+          />
+        </DropdownMenuGroup>
+        <DropdownMenuGroup label="Default Colors">
+          <ColorDropdownMenuItems
+            color={color}
+            className="px-2"
+            colors={colors}
+            updateColor={updateColor}
+          />
+        </DropdownMenuGroup>
+        {color && (
+          <DropdownMenuGroup>
+            <DropdownMenuItem className="p-2" onClick={clearColor}>
+              <EraserIcon />
+              <span>Clear</span>
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+        )}
+      </div>
+    );
+  }
+);
 
 export const ColorPicker = React.memo(
   ColorPickerContent,

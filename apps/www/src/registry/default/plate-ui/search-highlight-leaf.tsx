@@ -1,8 +1,6 @@
-import React from 'react';
-import { PlateLeaf, PlateLeafProps } from '@udecode/plate-common';
+'use client';
 
-import { cn } from '@/lib/utils';
+import { withCn } from '@udecode/cn';
+import { PlateLeaf } from '@udecode/plate/react';
 
-export function SearchHighlightLeaf({ className, ...props }: PlateLeafProps) {
-  return <PlateLeaf className={cn('bg-yellow-100', className)} {...props} />;
-}
+export const SearchHighlightLeaf = withCn(PlateLeaf, 'bg-yellow-100');

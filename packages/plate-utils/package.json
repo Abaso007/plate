@@ -1,27 +1,47 @@
 {
   "name": "@udecode/plate-utils",
-  "version": "22.0.2",
+  "version": "45.0.6",
   "description": "Plate utils",
-  "license": "MIT",
+  "keywords": [
+    "plate",
+    "plugin",
+    "slate"
+  ],
   "homepage": "https://platejs.org",
+  "bugs": {
+    "url": "https://github.com/udecode/plate/issues"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/udecode/plate.git",
     "directory": "packages/utils"
   },
-  "bugs": {
-    "url": "https://github.com/udecode/plate/issues"
+  "license": "MIT",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "module": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./react": {
+      "types": "./dist/react/index.d.ts",
+      "import": "./dist/react/index.mjs",
+      "module": "./dist/react/index.mjs",
+      "require": "./dist/react/index.js"
+    }
   },
   "main": "dist/index.js",
-  "module": "dist/index.es.js",
-  "files": [
-    "dist"
-  ],
+  "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*"
+  ],
   "scripts": {
+    "brl": "yarn p:brl",
     "build": "yarn p:build",
     "build:watch": "yarn p:build:watch",
-    "brl": "yarn p:brl",
     "clean": "yarn p:clean",
     "lint": "yarn p:lint",
     "lint:fix": "yarn p:lint:fix",
@@ -30,25 +50,17 @@
     "typecheck": "yarn p:typecheck"
   },
   "dependencies": {
-    "@radix-ui/react-slot": "^1.0.2",
-    "@udecode/plate-core": "22.0.2",
-    "@udecode/slate": "22.0.2",
-    "@udecode/slate-react": "22.0.2",
-    "@udecode/slate-utils": "22.0.2",
-    "@udecode/utils": "19.7.1"
+    "@udecode/plate-core": "45.0.6",
+    "@udecode/react-utils": "44.0.1",
+    "@udecode/slate": "45.0.6",
+    "@udecode/utils": "42.0.0",
+    "clsx": "^2.1.1",
+    "lodash": "^4.17.21"
   },
   "peerDependencies": {
-    "react": ">=16.8.0",
-    "react-dom": ">=16.8.0",
-    "slate": ">=0.94.0",
-    "slate-history": ">=0.93.0",
-    "slate-react": ">=0.95.0"
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
   },
-  "keywords": [
-    "plate",
-    "plugin",
-    "slate"
-  ],
   "publishConfig": {
     "access": "public"
   }
