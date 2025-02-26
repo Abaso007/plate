@@ -1,39 +1,46 @@
 'use client';
 
+import type { ComponentProps } from 'react';
 import * as React from 'react';
-import { DropdownMenuTriggerProps } from '@radix-ui/react-dropdown-menu';
 
-import { NpmCommands } from '@/types/unist';
-import { Event, trackEvent } from '@/lib/events';
-import { cn } from '@/lib/utils';
+import type { NpmCommands } from '@/types/unist';
+import type { DropdownMenuTriggerProps } from '@radix-ui/react-dropdown-menu';
+
+import { CheckIcon, ClipboardIcon } from '@radix-ui/react-icons';
+import { cn } from '@udecode/cn';
+
+import { type Event, trackEvent } from '@/lib/events';
 import { Button } from '@/registry/default/plate-ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/registry/default/plate-ui/dropdown-menu';
 
 import { Icons } from './icons';
 
-interface CopyButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
+interface CopyButtonProps extends ComponentProps<typeof Button> {
   value: string;
-  src?: string;
   event?: Event['name'];
+  src?: string;
 }
 
-async function copyToClipboardWithMeta(value: string, event?: Event) {
-  navigator.clipboard.writeText(value);
+export function copyToClipboardWithMeta(value: string, event?: Event) {
+  void navigator.clipboard.writeText(value);
+
   if (event) {
     trackEvent(event);
   }
 }
 
 export function CopyButton({
-  value,
   className,
-  src,
   event,
+  src,
+  value,
+  variant = 'ghost',
   ...props
 }: CopyButtonProps) {
   const [hasCopied, setHasCopied] = React.useState(false);
@@ -47,13 +54,13 @@ export function CopyButton({
   return (
     <Button
       size="icon"
-      variant="ghost"
+      variant={variant}
       className={cn(
-        'relative z-10 h-6 w-6 text-zinc-50 hover:bg-zinc-700 hover:text-zinc-50',
+        'relative z-10 size-6 text-slate-50 hover:bg-slate-700 hover:text-slate-50 [&_svg]:size-3',
         className
       )}
       onClick={() => {
-        copyToClipboardWithMeta(
+        void copyToClipboardWithMeta(
           value,
           event
             ? {
@@ -69,25 +76,20 @@ export function CopyButton({
       {...props}
     >
       <span className="sr-only">Copy</span>
-      {hasCopied ? (
-        <Icons.check className="h-3 w-3" />
-      ) : (
-        <Icons.copy className="h-3 w-3" />
-      )}
+      {hasCopied ? <CheckIcon /> : <ClipboardIcon />}
     </Button>
   );
 }
 
-interface CopyWithClassNamesProps extends DropdownMenuTriggerProps {
-  value: string;
-  classNames: string;
-  className?: string;
+interface CopyNpmCommandButtonProps extends DropdownMenuTriggerProps {
+  commands: Required<NpmCommands>;
+  icon?: React.ReactNode;
 }
 
 export function CopyWithClassNames({
-  value,
-  classNames,
   className,
+  classNames,
+  value,
 }: CopyWithClassNamesProps) {
   const [hasCopied, setHasCopied] = React.useState(false);
 
@@ -109,25 +111,25 @@ export function CopyWithClassNames({
           size="icon"
           variant="ghost"
           className={cn(
-            'relative z-10 h-6 w-6 text-zinc-50 hover:bg-zinc-700 hover:text-zinc-50',
+            'relative z-10 size-6 text-slate-50 hover:bg-slate-700 hover:text-slate-50',
             className
           )}
         >
           {hasCopied ? (
-            <Icons.check className="h-3 w-3" />
+            <Icons.check className="size-3" />
           ) : (
-            <Icons.copy className="h-3 w-3" />
+            <ClipboardIcon className="size-3" />
           )}
           <span className="sr-only">Copy</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={() => copyToClipboard(value)}>
-          <Icons.react className="mr-2 h-4 w-4" />
+          <Icons.react />
           <span>Component</span>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => copyToClipboard(classNames)}>
-          <Icons.tailwind className="mr-2 h-4 w-4" />
+          <Icons.tailwind />
           <span>Classname</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
@@ -135,13 +137,16 @@ export function CopyWithClassNames({
   );
 }
 
-interface CopyNpmCommandButtonProps extends DropdownMenuTriggerProps {
-  commands: Required<NpmCommands>;
+interface CopyWithClassNamesProps extends DropdownMenuTriggerProps {
+  classNames: string;
+  value: string;
+  className?: string;
 }
 
 export function CopyNpmCommandButton({
-  commands,
   className,
+  commands,
+  icon,
 }: CopyNpmCommandButtonProps) {
   const [hasCopied, setHasCopied] = React.useState(false);
 
@@ -152,7 +157,7 @@ export function CopyNpmCommandButton({
   }, [hasCopied]);
 
   const copyCommand = React.useCallback(
-    (value: string, pm: 'npm' | 'pnpm' | 'yarn') => {
+    (value: string, pm: 'bun' | 'npm' | 'pnpm' | 'yarn') => {
       void copyToClipboardWithMeta(value, {
         name: 'copy_npm_command',
         properties: {
@@ -172,34 +177,41 @@ export function CopyNpmCommandButton({
           size="icon"
           variant="ghost"
           className={cn(
-            'relative z-10 h-6 w-6 text-zinc-50 hover:bg-zinc-700 hover:text-zinc-50',
+            'relative z-10 size-6 text-slate-50 hover:bg-slate-700 hover:text-slate-50',
             className
           )}
         >
           {hasCopied ? (
-            <Icons.check className="h-3 w-3" />
+            <Icons.check className="size-3" />
           ) : (
-            <Icons.copy className="h-3 w-3" />
+            (icon ?? <ClipboardIcon className="size-3" />)
           )}
           <span className="sr-only">Copy</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem
-          onClick={() => copyCommand(commands.__npmCommand__, 'npm')}
-        >
-          npm
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={() => copyCommand(commands.__yarnCommand__, 'yarn')}
-        >
-          yarn
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={() => copyCommand(commands.__pnpmCommand__, 'pnpm')}
-        >
-          pnpm
-        </DropdownMenuItem>
+        <DropdownMenuGroup>
+          <DropdownMenuItem
+            onClick={() => copyCommand(commands.__pnpmCommand__, 'pnpm')}
+          >
+            pnpm
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => copyCommand(commands.__npmCommand__, 'npm')}
+          >
+            npm
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => copyCommand(commands.__yarnCommand__, 'yarn')}
+          >
+            yarn
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => copyCommand(commands.__bunCommand__, 'bun')}
+          >
+            bun
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
   );

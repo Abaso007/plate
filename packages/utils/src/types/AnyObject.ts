@@ -1,12 +1,6 @@
-export interface AnyObject {
-  [key: string]: any;
-}
-
-export interface UnknownObject {
-  [key: string]: unknown;
-}
-
-/**
- * Any function.
- */
+/** Any function. */
 export type AnyFunction = (...args: any) => any;
+
+export type AnyObject = Record<string, any>;
+
+export type UnknownObject = Record<string, unknown>;

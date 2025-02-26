@@ -1,5 +1,136 @@
 # @udecode/plate-node-id
 
+## 44.0.0
+
+## 43.0.3
+
+### Patch Changes
+
+- [`7c82e3f`](https://github.com/udecode/plate/commit/7c82e3f46587498d5e56fb698faef368398798eb) by [@zbeyens](https://github.com/zbeyens) – Fix "Cannot add property \_id, object is not extensible"
+
+## 43.0.0
+
+## 42.0.0
+
+## 41.0.0
+
+## 40.0.0
+
+### Minor Changes
+
+- [#3744](https://github.com/udecode/plate/pull/3744) by [@zbeyens](https://github.com/zbeyens) –
+  - `idCreator` default is now `nanoid(10)`
+  - New option `filterInline` to filter inline elements. Default is `true`.
+  - `NodeIdPlugin`:
+    - add `normalizeInitialValue` that set node ids when missing, called before mount
+    - default behavior will normalize only the first and last node are missing id to avoid traversing the entire document
+    - you can disable it with `NodeIdPlugin.configure({ normalizeInitialValue: null })`
+    - you can force check all nodes with `NodeIdPlugin.configure({ options: { normalizeInitialValue: true } })`
+
+## 39.0.0
+
+## 38.0.1
+
+### Patch Changes
+
+- [#3526](https://github.com/udecode/plate/pull/3526) by [@zbeyens](https://github.com/zbeyens) – Prefix base plugin with `Base`
+
+## 38.0.0
+
+## 37.0.0
+
+### Major Changes
+
+- [#3420](https://github.com/udecode/plate/pull/3420) by [@zbeyens](https://github.com/zbeyens) –
+  - `createNodeIdPlugin` -> `NodeIdPlugin`
+
+## 36.3.6
+
+### Patch Changes
+
+- [#3413](https://github.com/udecode/plate/pull/3413) by [@AHappyAtlas](https://github.com/AHappyAtlas) – ignore undefined node when insert nodes
+
+## 36.0.0
+
+## 34.0.0
+
+## 33.0.0
+
+## 32.0.0
+
+## 31.0.0
+
+## 30.5.3
+
+### Patch Changes
+
+- [`4cbed7159`](https://github.com/udecode/plate/commit/4cbed7159d51f7427051686e45bcf2a8899aeede) by [@zbeyens](https://github.com/zbeyens) – Move `@udecode/plate-common` to peerDeps to fix a bug when multiple instances were installed
+
+## 30.4.5
+
+## 30.1.2
+
+## 30.0.0
+
+## 29.1.0
+
+## 29.0.1
+
+## 29.0.0
+
+## 28.0.0
+
+## 27.0.3
+
+## 27.0.0
+
+## 25.0.1
+
+## 25.0.0
+
+## 24.5.2
+
+## 24.4.0
+
+### Minor Changes
+
+- [#2675](https://github.com/udecode/plate/pull/2675) by [@zbeyens](https://github.com/zbeyens) – Support slate-react 0.99.0
+
+## 24.3.6
+
+## 24.3.5
+
+## 24.3.2
+
+## 24.3.1
+
+## 24.3.0
+
+## 24.2.0
+
+## 24.0.2
+
+## 24.0.1
+
+## 24.0.0
+
+## 23.7.4
+
+## 23.7.0
+
+## 23.6.0
+
+## 23.4.0
+
+### Minor Changes
+
+- [#2579](https://github.com/udecode/plate/pull/2579) by [@zbeyens](https://github.com/zbeyens) – New plugin option `disableInsertOverrides`: when a node inserted using editor.insertNode(s) has an id, it will be used instead of the id generator, except if it already exists in the document.
+  Set this option to `true` to disable this behavior.
+
+## 23.3.1
+
+## 23.3.0
+
 ## 22.0.2
 
 ## 22.0.1

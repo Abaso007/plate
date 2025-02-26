@@ -1,18 +1,30 @@
-// @ts-nocheck
-
 'use client';
 
 import * as React from 'react';
 
-import { TableOfContents } from '@/lib/toc';
-import { cn } from '@/lib/utils';
-import { useMounted } from '@/hooks/use-mounted';
+import type { TableOfContents } from '@/lib/toc';
+
+import { cn } from '@udecode/cn';
+
+import { useLocale } from '@/hooks/useLocale';
 
 interface TocProps {
   toc: TableOfContents;
 }
 
+const i18n = {
+  cn: {
+    onThisPage: '目录',
+  },
+  en: {
+    onThisPage: 'On This Page',
+  },
+};
+
 export function DashboardTableOfContents({ toc }: TocProps) {
+  const locale = useLocale();
+  const content = i18n[locale as keyof typeof i18n];
+
   const itemIds = React.useMemo(
     () =>
       toc.items
@@ -23,27 +35,26 @@ export function DashboardTableOfContents({ toc }: TocProps) {
             ])
             .flat()
             .filter(Boolean)
-            .map((id) => id?.split('#')[1])
+            .map((id) => id?.split('#')[1] ?? '')
         : [],
     [toc]
   );
   const activeHeading = useActiveItem(itemIds);
-  const mounted = useMounted();
 
-  if (!toc?.items || !mounted) {
+  if (!toc?.items?.length) {
     return null;
   }
 
   return (
     <div className="space-y-2">
-      <p className="font-medium">On This Page</p>
-      <Tree tree={toc} activeItem={activeHeading} />
+      <p className="font-medium">{content.onThisPage}</p>
+      <Tree activeItem={activeHeading!} tree={toc} />
     </div>
   );
 }
 
 function useActiveItem(itemIds: string[]) {
-  const [activeId, setActiveId] = React.useState(null);
+  const [activeId, setActiveId] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     const observer = new IntersectionObserver(
@@ -70,6 +81,7 @@ function useActiveItem(itemIds: string[]) {
       itemIds?.forEach((id) => {
         // eslint-disable-next-line unicorn/prefer-query-selector
         const element = document.getElementById(id);
+
         if (element) {
           observer.unobserve(element);
         }
@@ -82,29 +94,29 @@ function useActiveItem(itemIds: string[]) {
 
 interface TreeProps {
   tree: TableOfContents;
-  level?: number;
   activeItem?: string;
+  level?: number;
 }
 
-function Tree({ tree, level = 1, activeItem }: TreeProps) {
+function Tree({ activeItem, level = 1, tree }: TreeProps) {
   return tree?.items?.length && level < 3 ? (
     <ul className={cn('m-0 list-none', { 'pl-4': level !== 1 })}>
       {tree.items.map((item, index) => {
         return (
           <li key={index} className={cn('mt-0 pt-2')}>
             <a
-              href={item.url}
               className={cn(
                 'inline-block no-underline transition-colors hover:text-foreground',
                 item.url === `#${activeItem}`
                   ? 'font-medium text-foreground'
                   : 'text-muted-foreground'
               )}
+              href={item.url}
             >
               {item.title}
             </a>
             {item.items?.length ? (
-              <Tree tree={item} level={level + 1} activeItem={activeItem} />
+              <Tree activeItem={activeItem} level={level + 1} tree={item} />
             ) : null}
           </li>
         );

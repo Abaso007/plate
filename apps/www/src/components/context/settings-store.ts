@@ -1,89 +1,146 @@
-import { createStore } from '@udecode/plate-common';
+'use client';
 
-import {
-  CheckedId,
-  SettingPlugin,
-  settingPluginItems,
-  settingPlugins,
-} from '@/config/setting-plugins';
-import { settingValues } from '@/config/setting-values';
-import { toast } from '@/components/ui/use-toast';
+import { createZustandStore } from '@udecode/plate';
+import { SingleLinePlugin } from '@udecode/plate-break/react';
+import { NormalizeTypesPlugin } from '@udecode/plate-normalizers';
+import { SelectOnBackspacePlugin } from '@udecode/plate-select';
 
-export const categoryIds = settingPlugins.map((item) => item.id);
+import { customizerList } from '@/config/customizer-items';
 
-const defaultCheckedPlugins = settingPlugins.reduce(
+export const categoryIds = customizerList.map((item) => item.id);
+
+const defaultCheckedComponents = {} as Record<string, boolean>;
+
+const defaultCheckedPlugins = customizerList.reduce(
   (acc, item) => {
     item.children.forEach((child) => {
+      child.components?.forEach((component) => {
+        defaultCheckedComponents[component.id] = true;
+      });
+
       acc[child.id] = true;
     });
+
     return acc;
   },
-  {} as Record<CheckedId, boolean>
+  {} as Record<string, boolean>
 );
 
 export const getDefaultCheckedPlugins = () => {
   return {
     ...defaultCheckedPlugins,
-    normalizeTypes: false,
-    singleLine: false,
     list: false,
-  } as Record<CheckedId, boolean>;
+    [NormalizeTypesPlugin.key]: false,
+    [SelectOnBackspacePlugin.key]: false,
+    [SingleLinePlugin.key]: false,
+  } as Record<string, boolean>;
 };
 
-export const settingsStore = createStore('settings')({
-  showSettings: true,
+export const getDefaultCheckedComponents = () => {
+  return {
+    ...defaultCheckedComponents,
+  } as Record<string, boolean>;
+};
 
-  valueId: settingValues.playground.id,
+export type SettingsStoreValue = {
+  checkedComponents: Record<string, boolean>;
+  checkedPlugins: Record<string, boolean>;
+  checkedPluginsNext: Record<string, boolean>;
+  customizerTab: string;
+  homeTab: string;
+  loadingSettings: boolean;
+  showComponents: boolean;
+  showSettings: boolean;
+  valueId: string;
+  version: number;
+};
 
-  checkedPluginsNext: getDefaultCheckedPlugins(),
-
+const initialState: SettingsStoreValue = {
+  checkedComponents: getDefaultCheckedComponents(),
   checkedPlugins: getDefaultCheckedPlugins(),
+  checkedPluginsNext: getDefaultCheckedPlugins(),
+  // homeTab: 'installation',
+  customizerTab: 'plugins',
+  homeTab: 'playground',
+  loadingSettings: true,
+
+  showComponents: true,
+
+  showSettings: false,
+
+  valueId: 'playground',
+  version: 1,
+};
+
+export const SettingsStore = createZustandStore(initialState, {
+  mutative: true,
+  name: 'settings',
 })
-  .extendActions((set) => ({
-    reset: ({
+  .extendActions(({ set }) => ({
+    resetComponents: ({
       exclude,
     }: {
       exclude?: string[];
     } = {}) => {
-      set.state((draft) => {
-        draft.checkedPluginsNext = getDefaultCheckedPlugins();
+      set('state', (draft) => {
+        draft.checkedComponents = getDefaultCheckedComponents();
 
         exclude?.forEach((item) => {
-          draft.checkedPluginsNext[item] = false;
+          draft.checkedComponents![item] = false;
         });
       });
     },
-    setCheckedIdNext: (id: CheckedId | CheckedId[], checked: boolean) => {
-      set.state((draft) => {
-        draft.checkedPluginsNext = { ...draft.checkedPluginsNext };
-
-        const conflicts =
-          (settingPluginItems[id as string] as SettingPlugin)?.conflicts ?? [];
-
-        conflicts.forEach((item) => {
-          if (!draft.checkedPluginsNext[item]) return;
-
-          draft.checkedPluginsNext[item] = false;
-
-          const label = settingPluginItems[item]?.label;
-          if (label) {
-            toast({
-              description: `${label} plugin disabled.`,
-              variant: 'default',
-            });
-          }
+    resetPlugins: ({
+      exclude,
+    }: {
+      exclude?: string[];
+    } = {}) => {
+      set('state', (draft) => {
+        // draft.checkedPluginsNext = getDefaultCheckedPlugins();
+        draft.checkedPlugins = getDefaultCheckedPlugins();
+        exclude?.forEach((item) => {
+          // draft.checkedPluginsNext[item] = false;
+          draft.checkedPlugins![item] = false;
         });
+      });
+    },
+    setCheckedComponentId: (id: string[] | string, checked: boolean) => {
+      set('state', (draft) => {
+        draft.checkedComponents![id as string] = checked;
+      });
+    },
+    setCheckedIdNext: (id: string[] | string, checked: boolean) => {
+      set('state', (draft) => {
+        draft.checkedPlugins![id as string] = checked;
 
-        draft.checkedPluginsNext[id as string] = checked;
+        // draft.checkedPluginsNext = { ...draft.checkedPluginsNext };
+
+        // const conflicts =
+        //   (customizerItems[id as string] as SettingPlugin)?.conflicts ?? [];
+
+        // conflicts.forEach((item) => {
+        //   if (!draft.checkedPluginsNext[item]) return;
+
+        //   draft.checkedPluginsNext[item] = false;
+
+        //   const label = customizerItems[item]?.label;
+
+        //   if (label) {
+        //     toast(`${label} plugin disabled.`);
+        //   }
+        // });
+
+        // draft.checkedPluginsNext[id as string] = checked;
       });
     },
     syncChecked: () => {
-      set.state((draft) => {
+      set('state', (draft) => {
         draft.checkedPlugins = { ...draft.checkedPluginsNext };
       });
     },
   }))
-  .extendSelectors((get) => ({
-    checkedIdNext: (id: CheckedId) => get.checkedPluginsNext[id],
-    checkedId: (id: CheckedId) => get.checkedPlugins[id],
+  .extendSelectors(({ get }) => ({
+    checkedComponentId: (id?: string) => id && get('checkedComponents')[id],
+    checkedId: (id: string) => get('checkedPlugins')[id],
+    checkedIdNext: (id: string) => get('checkedPluginsNext')[id],
   }));
