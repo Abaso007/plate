@@ -1,49 +1,48 @@
-import React, { useRef } from 'react';
-import { TEditor, TElement } from '@udecode/plate-common';
-import { ConnectDragSource, DropTargetMonitor } from 'react-dnd';
+import React from 'react';
 
-import { DragItemNode, DropLineDirection, useDndBlock } from '..';
+import { useEditorRef } from '@udecode/plate/react';
+
+import { type UseDndNodeOptions, DRAG_ITEM_BLOCK, useDndNode } from '..';
 
 export type DraggableState = {
-  dropLine: DropLineDirection;
   isDragging: boolean;
-  nodeRef: React.RefObject<HTMLDivElement>;
-  dragRef: ConnectDragSource;
+  /** The ref of the draggable element */
+  previewRef: React.RefObject<HTMLDivElement | null>;
+  /** The ref of the draggable handle */
+  handleRef: (
+    elementOrNode:
+      | Element
+      | React.ReactElement<any>
+      | React.RefObject<any>
+      | null
+  ) => void;
 };
 
-export const useDraggableState = (props: {
-  element: TElement;
-  onDropHandler?: (
-    editor: TEditor,
-    props: {
-      monitor: DropTargetMonitor<DragItemNode, unknown>;
-      dragItem: DragItemNode;
-      nodeRef: any;
-      id: string;
-    }
-  ) => boolean;
-}): DraggableState => {
-  const { element, onDropHandler } = props;
-
-  const nodeRef = useRef<HTMLDivElement>(null);
-  const { dropLine, isDragging, dragRef } = useDndBlock({
-    id: element.id as string,
-    nodeRef,
+export const useDraggable = (props: UseDndNodeOptions): DraggableState => {
+  const {
+    orientation = 'vertical',
+    type = DRAG_ITEM_BLOCK,
     onDropHandler,
+  } = props;
+
+  const editor = useEditorRef();
+
+  const nodeRef = React.useRef<HTMLDivElement>(null);
+
+  if (!editor.plugins.dnd) return {} as any;
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const { dragRef, isDragging } = useDndNode({
+    nodeRef,
+    orientation,
+    type,
+    onDropHandler,
+    ...props,
   });
 
-  return { dropLine, isDragging, nodeRef, dragRef };
-};
-
-export const useDraggable = (state: DraggableState) => {
   return {
-    previewRef: state.nodeRef,
-    handleRef: state.dragRef,
-    droplineProps: {
-      contentEditable: false,
-    },
-    gutterLeftProps: {
-      contentEditable: false,
-    },
+    isDragging,
+    previewRef: nodeRef,
+    handleRef: dragRef,
   };
 };

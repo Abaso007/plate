@@ -1,17 +1,14 @@
-import { focusEditor, PlateEditor, select, Value } from '@udecode/plate-common';
-import { Range } from 'slate';
+import type { PlateEditor } from '@udecode/plate/react';
 
 import { getBlocksWithId } from '../queries/getBlocksWithId';
-import { getNodesRange } from '../queries/getNodesRange';
 import { selectBlockById } from './selectBlockById';
 
 /**
- * Select blocks by selection or by id.
- * If the block with id is not selected, select the block with id.
- * Else, select the blocks above the selection.
+ * Select blocks by selection or by id. If the block with id is not selected,
+ * select the block with id. Else, select the blocks above the selection.
  */
-export const selectBlocksBySelectionOrId = <V extends Value>(
-  editor: PlateEditor<V>,
+export const selectBlocksBySelectionOrId = (
+  editor: PlateEditor,
   id: string
 ) => {
   if (!editor.selection) return;
@@ -22,8 +19,8 @@ export const selectBlocksBySelectionOrId = <V extends Value>(
   );
 
   if (isBlockSelected) {
-    select(editor, getNodesRange(editor, blockEntries) as Range);
-    focusEditor(editor);
+    editor.tf.select(editor.api.nodesRange(blockEntries)!);
+    editor.tf.focus();
   } else {
     selectBlockById(editor, id);
   }

@@ -1,17 +1,23 @@
+import type { BaseColor } from '@/registry/registry-base-colors';
+import type { Style } from '@/registry/registry-styles';
+
 import { useAtom } from 'jotai';
 import { atomWithStorage } from 'jotai/utils';
 
-import { Style } from '@/registry/styles';
-import { Theme } from '@/registry/themes';
-
 type Config = {
+  installationType: 'cli' | 'manual';
+  packageManager: 'bun' | 'npm' | 'pnpm' | 'yarn';
+  radius: number;
   style: Style['name'];
-  theme: Theme['name'];
+  theme: BaseColor['name'];
 };
 
 const configAtom = atomWithStorage<Config>('config', {
+  installationType: 'cli',
+  packageManager: 'pnpm',
+  radius: 0.5,
   style: 'default',
-  theme: 'zinc',
+  theme: 'slate',
 });
 
 export function useConfig() {

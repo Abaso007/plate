@@ -1,5 +1,130 @@
 # @udecode/plate-autoformat
 
+## 44.0.0
+
+## 43.0.0
+
+## 42.2.4
+
+### Patch Changes
+
+- [#4012](https://github.com/udecode/plate/pull/4012) by [@zbeyens](https://github.com/zbeyens) – Fix overrideEditor insertText missing options
+
+## 42.0.0
+
+## 41.0.0
+
+## 40.0.0
+
+## 39.0.0
+
+## 38.0.1
+
+### Patch Changes
+
+- [#3526](https://github.com/udecode/plate/pull/3526) by [@zbeyens](https://github.com/zbeyens) – Prefix base plugin with `Base`
+
+## 38.0.0
+
+## 37.0.0
+
+### Major Changes
+
+- [#3420](https://github.com/udecode/plate/pull/3420) by [@zbeyens](https://github.com/zbeyens) –
+  - `createAutoformatPlugin` -> `AutoformatPlugin`
+
+## 36.5.6
+
+### Patch Changes
+
+- [#3457](https://github.com/udecode/plate/pull/3457) by [@nklhtv](https://github.com/nklhtv) – Use editor.blockFactory to create default elements
+
+## 36.4.0
+
+### Minor Changes
+
+- [`8342b6c2f333ee445c8b6be7e864857fd2a2584a`](https://github.com/udecode/plate/commit/8342b6c2f333ee445c8b6be7e864857fd2a2584a) by [@zbeyens](https://github.com/zbeyens) – feat: `autoformatBlock` - Add `matchByRegex` option
+
+## 36.0.0
+
+## 34.0.0
+
+## 33.0.0
+
+## 32.0.0
+
+## 31.0.0
+
+## 30.5.3
+
+### Patch Changes
+
+- [`4cbed7159`](https://github.com/udecode/plate/commit/4cbed7159d51f7427051686e45bcf2a8899aeede) by [@zbeyens](https://github.com/zbeyens) – Move `@udecode/plate-common` to peerDeps to fix a bug when multiple instances were installed
+
+## 30.5.2
+
+### Patch Changes
+
+- [#2961](https://github.com/udecode/plate/pull/2961) by [@zbeyens](https://github.com/zbeyens) – Move `@udecode/plate-common` to peerDeps to fix a bug when multiple instances were installed
+
+## 30.4.5
+
+## 30.1.2
+
+## 30.0.0
+
+## 29.1.0
+
+## 29.0.1
+
+## 29.0.0
+
+## 28.0.0
+
+## 27.0.3
+
+## 27.0.0
+
+## 25.0.1
+
+## 25.0.0
+
+## 24.5.2
+
+## 24.4.0
+
+### Minor Changes
+
+- [#2675](https://github.com/udecode/plate/pull/2675) by [@zbeyens](https://github.com/zbeyens) – Support slate-react 0.99.0
+
+## 24.3.6
+
+## 24.3.5
+
+## 24.3.2
+
+## 24.3.1
+
+## 24.3.0
+
+## 24.2.0
+
+## 24.0.2
+
+## 24.0.1
+
+## 24.0.0
+
+## 23.7.4
+
+## 23.7.0
+
+## 23.6.0
+
+## 23.3.1
+
+## 23.3.0
+
 ## 22.0.2
 
 ## 22.0.1

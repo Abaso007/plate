@@ -1,11 +1,6 @@
-import React, {
-  CSSProperties,
-  HTMLAttributes,
-  RefObject,
-  useEffect,
-  useRef,
-} from 'react';
-import { throttle } from 'lodash';
+import React from 'react';
+
+import throttle from 'lodash/throttle.js';
 import raf from 'raf';
 
 const getCoords = (e: any) => {
@@ -17,40 +12,40 @@ const getCoords = (e: any) => {
 };
 
 export interface ScrollAreaProps {
-  placement: 'top' | 'bottom';
+  placement: 'bottom' | 'top';
+  containerRef?: React.RefObject<any>;
   enabled?: boolean;
   height?: number;
-  zIndex?: number;
   minStrength?: number;
+  scrollAreaProps?: React.HTMLAttributes<HTMLDivElement>;
   strengthMultiplier?: number;
-  containerRef?: RefObject<any>;
-  scrollAreaProps?: HTMLAttributes<HTMLDivElement>;
+  zIndex?: number;
 }
 
 export function ScrollArea({
-  placement,
+  containerRef,
   enabled = true,
   height = 100,
-  zIndex = 10_000,
   minStrength = 0.15,
-  strengthMultiplier = 25,
-  containerRef,
+  placement,
   scrollAreaProps,
+  strengthMultiplier = 25,
+  zIndex = 10_000,
 }: ScrollAreaProps) {
-  const ref = useRef<HTMLDivElement>();
+  const ref = React.useRef<HTMLDivElement>(undefined);
 
-  const scaleYRef = useRef(0);
-  const frameRef = useRef<number | null>(null);
+  const scaleYRef = React.useRef(0);
+  const frameRef = React.useRef<number | null>(null);
 
   const direction = placement === 'top' ? -1 : 1;
 
   // Drag a fixed, invisible box of custom height at the top, and bottom
   // of the window. Make sure to show it only when dragging something.
-  const style: CSSProperties = {
-    position: 'fixed',
+  const style: React.CSSProperties = {
     height,
-    width: '100%',
     opacity: 0,
+    position: 'fixed',
+    width: '100%',
     zIndex,
     ...scrollAreaProps?.style,
   };
@@ -77,6 +72,7 @@ export function ScrollArea({
       // stop scrolling if there's nothing to do
       if (strengthMultiplier === 0 || scaleY === 0) {
         stopScrolling();
+
         return;
       }
 
@@ -99,9 +95,10 @@ export function ScrollArea({
   const updateScrolling = throttle(
     (e) => {
       const container = ref.current;
+
       if (!container) return;
 
-      const { top: y, height: h } = container.getBoundingClientRect();
+      const { height: h, top: y } = container.getBoundingClientRect();
       const coords = getCoords(e);
 
       const strength = Math.max(Math.max(coords.y - y, 0) / h, minStrength);
@@ -122,7 +119,7 @@ export function ScrollArea({
     updateScrolling(e);
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (!enabled) {
       stopScrolling();
     }
@@ -134,11 +131,11 @@ export function ScrollArea({
   return (
     <div
       ref={ref as any}
-      style={style}
-      onDragOver={handleEvent}
-      onDragLeave={stopScrolling}
-      onDragEnd={stopScrolling}
       // touchmove events don't seem to work across siblings, so we unfortunately
+      style={style}
+      onDragEnd={stopScrolling}
+      onDragLeave={stopScrolling}
+      onDragOver={handleEvent}
       // would have to attach the listeners to the body
       onTouchMove={handleEvent}
       {...scrollAreaProps}

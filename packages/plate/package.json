@@ -1,85 +1,7 @@
 {
   "name": "@udecode/plate",
-  "version": "22.0.2",
-  "description": "Plate – a plugin system for slate",
-  "license": "MIT",
-  "homepage": "https://platejs.org",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/udecode/plate.git",
-    "directory": "packages/plate"
-  },
-  "bugs": {
-    "url": "https://github.com/udecode/plate/issues"
-  },
-  "installConfig": {
-    "hoistingLimits": "workspaces"
-  },
-  "main": "dist/index.js",
-  "module": "dist/index.es.js",
-  "files": [
-    "dist"
-  ],
-  "types": "dist/index.d.ts",
-  "scripts": {
-    "build": "yarn p:build",
-    "build:watch": "yarn p:build:watch",
-    "brl": "yarn p:brl:below",
-    "clean": "yarn p:clean",
-    "lint": "yarn p:lint",
-    "lint:fix": "yarn p:lint:fix",
-    "test": "yarn p:test",
-    "test:watch": "yarn p:test:watch",
-    "typecheck": "yarn p:typecheck"
-  },
-  "dependencies": {
-    "@udecode/plate-alignment": "22.0.2",
-    "@udecode/plate-autoformat": "22.0.2",
-    "@udecode/plate-basic-elements": "22.0.2",
-    "@udecode/plate-basic-marks": "22.0.2",
-    "@udecode/plate-block-quote": "22.0.2",
-    "@udecode/plate-break": "22.0.2",
-    "@udecode/plate-code-block": "22.0.2",
-    "@udecode/plate-combobox": "22.0.2",
-    "@udecode/plate-comments": "22.0.2",
-    "@udecode/plate-common": "22.0.2",
-    "@udecode/plate-find-replace": "22.0.2",
-    "@udecode/plate-floating": "22.0.2",
-    "@udecode/plate-font": "22.0.2",
-    "@udecode/plate-heading": "22.0.2",
-    "@udecode/plate-highlight": "22.0.2",
-    "@udecode/plate-horizontal-rule": "22.0.2",
-    "@udecode/plate-indent": "22.0.2",
-    "@udecode/plate-indent-list": "22.0.2",
-    "@udecode/plate-kbd": "22.0.2",
-    "@udecode/plate-line-height": "22.0.2",
-    "@udecode/plate-link": "22.0.2",
-    "@udecode/plate-list": "22.0.2",
-    "@udecode/plate-media": "22.0.2",
-    "@udecode/plate-mention": "22.0.2",
-    "@udecode/plate-node-id": "22.0.2",
-    "@udecode/plate-normalizers": "22.0.2",
-    "@udecode/plate-paragraph": "22.0.2",
-    "@udecode/plate-reset-node": "22.0.2",
-    "@udecode/plate-select": "22.0.2",
-    "@udecode/plate-serializer-csv": "22.0.2",
-    "@udecode/plate-serializer-docx": "22.0.2",
-    "@udecode/plate-serializer-html": "22.0.2",
-    "@udecode/plate-serializer-md": "22.0.2",
-    "@udecode/plate-suggestion": "22.0.2",
-    "@udecode/plate-tabbable": "22.0.2",
-    "@udecode/plate-table": "22.0.2",
-    "@udecode/plate-trailing-block": "22.0.2",
-    "@udecode/resizable": "22.0.2"
-  },
-  "peerDependencies": {
-    "react": ">=16.8.0",
-    "react-dom": ">=16.8.0",
-    "slate": ">=0.94.0",
-    "slate-history": ">=0.93.0",
-    "slate-hyperscript": ">=0.66.0",
-    "slate-react": ">=0.95.0"
-  },
+  "version": "45.0.8",
+  "description": "Plate – a framework for building rich text editors on the web",
   "keywords": [
     "contentEditable",
     "editor",
@@ -91,8 +13,61 @@
     "slate",
     "wysiwyg"
   ],
+  "homepage": "https://platejs.org",
+  "bugs": {
+    "url": "https://github.com/udecode/plate/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/udecode/plate.git",
+    "directory": "packages/plate"
+  },
+  "license": "MIT",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "module": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./react": {
+      "types": "./dist/react/index.d.ts",
+      "import": "./dist/react/index.mjs",
+      "module": "./dist/react/index.mjs",
+      "require": "./dist/react/index.js"
+    }
+  },
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*"
+  ],
+  "scripts": {
+    "brl": "yarn p:brl",
+    "build": "yarn p:build",
+    "build:watch": "yarn p:build:watch",
+    "clean": "yarn p:clean",
+    "lint": "yarn p:lint",
+    "lint:fix": "yarn p:lint:fix",
+    "test": "yarn p:test",
+    "test:watch": "yarn p:test:watch",
+    "typecheck": "yarn p:typecheck"
+  },
+  "dependencies": {
+    "@udecode/plate-core": "45.0.8",
+    "@udecode/plate-utils": "45.0.8",
+    "@udecode/react-hotkeys": "37.0.0",
+    "@udecode/react-utils": "44.0.1",
+    "@udecode/slate": "45.0.6",
+    "@udecode/utils": "42.0.0"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
+  },
   "publishConfig": {
     "access": "public"
-  },
-  "gitHead": "9f660a54cbd931cd20a6ad99e9319dbebfc7e1af"
+  }
 }

@@ -1,26 +1,14 @@
-import {
-  focusEditor,
-  GetNodeEntriesOptions,
-  removeNodes,
-  TReactEditor,
-  unhangRange,
-  Value,
-} from '@udecode/plate-common';
+import type { Editor, EditorNodesOptions, ValueOf } from '@udecode/plate';
 
 import { getBlocksWithId } from '../queries/getBlocksWithId';
-import { getNodesRange } from '../queries/getNodesRange';
 
-/**
- * Remove blocks with an id and focus the editor.
- */
-export const removeBlocksAndFocus = <V extends Value>(
-  editor: TReactEditor<V>,
-  options: GetNodeEntriesOptions<V>
+/** Remove blocks with an id and focus the editor. */
+export const removeBlocksAndFocus = <E extends Editor = Editor>(
+  editor: E,
+  options: EditorNodesOptions<ValueOf<E>>
 ) => {
-  unhangRange(editor, options?.at, options);
-
   const nodeEntries = getBlocksWithId(editor, options);
 
-  removeNodes(editor, { at: getNodesRange(editor, nodeEntries) });
-  focusEditor(editor);
+  editor.tf.removeNodes({ at: editor.api.nodesRange(nodeEntries) });
+  editor.tf.focus();
 };

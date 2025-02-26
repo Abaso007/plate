@@ -1,24 +1,26 @@
-import { MutableRefObject, useCallback, useEffect } from 'react';
-import { Range } from 'slate';
+import React from 'react';
 
-import { CursorOverlayProps } from '../components';
-import { SelectionRect } from '../types';
+import type { TRange } from '@udecode/plate';
+
+import type { CursorOverlayProps } from '../components';
+import type { SelectionRect } from '../types';
+
 import { useRequestReRender } from './useRequestReRender';
 
-export interface UseRefreshOnResizeOptions
-  extends Pick<CursorOverlayProps, 'refreshOnResize' | 'containerRef'> {
-  selectionRectCache: MutableRefObject<WeakMap<Range, SelectionRect[]>>;
+export interface useRefreshOnResizeOptions
+  extends Pick<CursorOverlayProps, 'containerRef' | 'refreshOnResize'> {
+  selectionRectCache: React.MutableRefObject<WeakMap<TRange, SelectionRect[]>>;
 }
 
 export const useRefreshOnResize = ({
   containerRef,
   refreshOnResize,
   selectionRectCache,
-}: UseRefreshOnResizeOptions) => {
+}: useRefreshOnResizeOptions) => {
   const requestReRender = useRequestReRender();
 
   // Reset the selection rect cache and request re-render.
-  const refresh = useCallback(
+  const refresh = React.useCallback(
     (sync = false) => {
       selectionRectCache.current = new WeakMap();
       requestReRender(sync);
@@ -27,13 +29,14 @@ export const useRefreshOnResize = ({
   );
 
   // Refresh on container resize
-  useEffect(() => {
+  React.useEffect(() => {
     if (!refreshOnResize || !containerRef?.current) {
       return;
     }
 
     const resizeObserver = new ResizeObserver(() => refresh());
     resizeObserver.observe(containerRef.current);
+
     return () => resizeObserver.disconnect();
   }, [containerRef, refresh, refreshOnResize]);
 

@@ -1,23 +1,25 @@
-/** @jsx jsx */
+/** @jsx jsxt */
 
-import { createPlateEditor, PlateEditor } from '@udecode/plate-common';
-import { ELEMENT_LINK } from '@udecode/plate-link';
-import { jsx } from '@udecode/plate-test-utils';
+import { createEditor, createSlateEditor } from '@udecode/plate';
+import { LinkPlugin } from '@udecode/plate-link/react';
+import { jsxt } from '@udecode/plate-test-utils';
 
-import { createRemoveEmptyNodesPlugin } from '../../createRemoveEmptyNodesPlugin';
+import { RemoveEmptyNodesPlugin } from '../../lib/RemoveEmptyNodesPlugin';
 
-jsx;
+jsxt;
 
-const input = (
-  <editor>
-    <hp>
-      <ha url="http://google.com">
-        <htext />
-      </ha>
-      <cursor />
-    </hp>
-  </editor>
-) as any as PlateEditor;
+const input = createEditor(
+  (
+    <editor>
+      <hp>
+        <ha url="http://google.com">
+          <htext />
+        </ha>
+        <cursor />
+      </hp>
+    </editor>
+  ) as any
+);
 
 const output = (
   <editor>
@@ -28,18 +30,19 @@ const output = (
 ) as any;
 
 it('should be', () => {
-  const editor = createPlateEditor({
-    editor: input,
+  const editor = createSlateEditor({
     plugins: [
-      createRemoveEmptyNodesPlugin({
+      RemoveEmptyNodesPlugin.configure({
         options: {
-          types: ELEMENT_LINK,
+          types: LinkPlugin.key,
         },
       }),
     ],
+    selection: input.selection,
+    value: input.children,
   });
 
-  editor.normalizeNode([(input.children[0] as any).children[0], [0, 0]]);
+  editor.tf.normalizeNode([(input.children[0] as any).children[0], [0, 0]]);
 
-  expect(input.children).toEqual(output.children);
+  expect(editor.children).toEqual(output.children);
 });

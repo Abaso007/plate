@@ -1,22 +1,11 @@
-import {
-  findNode,
-  focusEditor,
-  getRange,
-  select,
-  TReactEditor,
-  Value,
-} from '@udecode/plate-common';
+import type { Editor } from '@udecode/plate';
 
-/**
- * Select the block above the selection by id and focus the editor.
- */
-export const selectBlockById = <V extends Value>(
-  editor: TReactEditor<V>,
-  id: string
-) => {
-  const path = findNode(editor, { at: [], match: { id } })?.[1];
+/** Select the block above the selection by id and focus the editor. */
+export const selectBlockById = (editor: Editor, id: string) => {
+  const path = editor.api.node({ id, at: [] })?.[1];
+
   if (!path) return;
 
-  select(editor, getRange(editor, path));
-  focusEditor(editor);
+  editor.tf.select(editor.api.range(path)!);
+  editor.tf.focus();
 };

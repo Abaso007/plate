@@ -1,16 +1,19 @@
+'use client';
+
 import React from 'react';
-import { PlateLeaf, PlateLeafProps } from '@udecode/plate-common';
 
-import { cn } from '@/lib/utils';
+import { cn, withRef } from '@udecode/cn';
+import { PlateLeaf } from '@udecode/plate/react';
 
-export function HighlightLeaf({
-  className,
-  children,
-  ...props
-}: PlateLeafProps) {
-  return (
-    <PlateLeaf asChild className={cn('bg-yellow-200', className)} {...props}>
-      <mark>{children}</mark>
+export const HighlightLeaf = withRef<typeof PlateLeaf>(
+  ({ children, className, ...props }, ref) => (
+    <PlateLeaf
+      ref={ref}
+      as="mark"
+      className={cn(className, 'bg-highlight/30 text-inherit')}
+      {...props}
+    >
+      {children}
     </PlateLeaf>
-  );
-}
+  )
+);

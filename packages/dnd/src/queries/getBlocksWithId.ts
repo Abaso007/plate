@@ -1,21 +1,14 @@
-import {
-  getNodeEntries,
-  GetNodeEntriesOptions,
-  isBlock,
-  TEditor,
-  Value,
-} from '@udecode/plate-common';
+import type { Editor, EditorNodesOptions, ValueOf } from '@udecode/plate';
 
-/**
- * Get blocks with an id
- */
-export const getBlocksWithId = <V extends Value>(
-  editor: TEditor<V>,
-  options: GetNodeEntriesOptions<V>
+/** Get blocks with an id */
+export const getBlocksWithId = <E extends Editor>(
+  editor: E,
+  options: EditorNodesOptions<ValueOf<E>>
 ) => {
-  const _nodes = getNodeEntries(editor, {
-    match: (n) => isBlock(editor, n) && !!n.id,
+  const _nodes = editor.api.nodes({
+    match: (n) => editor.api.isBlock(n) && !!n.id,
     ...options,
   });
+
   return Array.from(_nodes);
 };
