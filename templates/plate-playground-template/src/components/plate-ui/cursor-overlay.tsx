@@ -1,53 +1,48 @@
+'use client';
+
 import React from 'react';
-import { createStore } from '@udecode/plate-common';
+
+import { cn } from '@udecode/cn';
+import { RangeApi } from '@udecode/plate';
 import {
-  CursorData,
-  CursorOverlay as CursorOverlayPrimitive,
-  CursorOverlayProps,
-  CursorProps,
-} from '@udecode/plate-cursor';
-
-import { cn } from '@/lib/utils';
-
-export const cursorStore = createStore('cursor')({
-  cursors: {},
-});
+  type CursorData,
+  type CursorOverlayState,
+  useCursorOverlay,
+} from '@udecode/plate-selection/react';
 
 export function Cursor({
-  data,
-  selectionRects,
+  id,
   caretPosition,
-  disableCaret,
-  disableSelection,
-  classNames,
-}: CursorProps<CursorData>) {
-  if (!data) {
-    return null;
-  }
-
-  const { style, selectionStyle = style } = data;
+  data,
+  selection,
+  selectionRects,
+}: CursorOverlayState<CursorData>) {
+  const { style, selectionStyle = style } = data ?? ({} as CursorData);
+  const isCursor = RangeApi.isCollapsed(selection);
 
   return (
     <>
-      {!disableSelection &&
-        selectionRects.map((position, i) => (
+      {selectionRects.map((position, i) => {
+        return (
           <div
             key={i}
             className={cn(
-              'pointer-events-none absolute z-10 opacity-[0.3]',
-              classNames?.selectionRect
+              'pointer-events-none absolute z-10',
+              id === 'selection' && 'bg-brand/25',
+              id === 'selection' && isCursor && 'bg-primary'
             )}
             style={{
               ...selectionStyle,
               ...position,
             }}
           />
-        ))}
-      {!disableCaret && caretPosition && (
+        );
+      })}
+      {caretPosition && (
         <div
           className={cn(
             'pointer-events-none absolute z-10 w-0.5',
-            classNames?.caret
+            id === 'drag' && 'w-px bg-brand'
           )}
           style={{ ...caretPosition, ...style }}
         />
@@ -56,16 +51,14 @@ export function Cursor({
   );
 }
 
-export function CursorOverlay({ cursors, ...props }: CursorOverlayProps) {
-  const dynamicCursors = cursorStore.use.cursors();
-
-  const allCursors = { ...cursors, ...dynamicCursors };
+export function CursorOverlay() {
+  const { cursors } = useCursorOverlay();
 
   return (
-    <CursorOverlayPrimitive
-      {...props}
-      cursors={allCursors}
-      onRenderCursor={Cursor}
-    />
+    <>
+      {cursors.map((cursor) => (
+        <Cursor key={cursor.id} {...cursor} />
+      ))}
+    </>
   );
 }

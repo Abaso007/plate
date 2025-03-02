@@ -1,18 +1,16 @@
 'use client';
 
 import * as React from 'react';
-import Link, { LinkProps } from 'next/link';
+
+import { cn } from '@udecode/cn';
+import Link, { type LinkProps } from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { SidebarOpen } from 'lucide-react';
 
 import { docsConfig } from '@/config/docs';
-import { siteConfig } from '@/config/site';
-import { cn } from '@/lib/utils';
+import { useMetaColor } from '@/hooks/use-meta-color';
 import { Button } from '@/registry/default/plate-ui/button';
 
-import { Logo } from './icons/Logo';
-import { ScrollArea } from './ui/scroll-area';
-import { Sheet, SheetContent, SheetTrigger } from './ui/sheet';
+import { Drawer, DrawerContent, DrawerTrigger } from './ui/drawer';
 
 export function MobileNav() {
   const pathname = usePathname();
@@ -20,38 +18,58 @@ export function MobileNav() {
   const navItems = isUI ? docsConfig.componentsNav : docsConfig.sidebarNav;
 
   const [open, setOpen] = React.useState(false);
+  const { metaColor, setMetaColor } = useMetaColor();
+  const onOpenChange = React.useCallback(
+    (open: boolean) => {
+      setOpen(open);
+      setMetaColor(open ? '#09090b' : metaColor);
+    },
+    [setMetaColor, metaColor]
+  );
 
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
-      <SheetTrigger asChild>
+    <Drawer open={open} onOpenChange={onOpenChange}>
+      <DrawerTrigger asChild>
         <Button
+          size="lg"
           variant="ghost"
-          className="mr-2 px-0 text-base hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 md:hidden"
+          className="mr-2 -ml-2 size-8 px-0 text-base hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 md:hidden"
         >
-          <SidebarOpen className="h-6 w-6" />
+          <svg
+            className="size-6!"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M3.75 9h16.5m-16.5 6.75h16.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+
           <span className="sr-only">Toggle Menu</span>
         </Button>
-      </SheetTrigger>
-      <SheetContent side="left" className="pr-0">
-        <MobileLink
-          href="/"
-          className="flex items-center"
-          onOpenChange={setOpen}
-        >
-          <Logo className="mr-2 h-4 w-4" />
-          <span className="font-bold">{siteConfig.name}</span>
-        </MobileLink>
-        <ScrollArea className="my-4 h-[calc(100vh-8rem)] pb-10 pl-6">
+      </DrawerTrigger>
+      <DrawerContent className="max-h-[60svh] p-0">
+        <div className="overflow-auto p-6">
           <div className="flex flex-col space-y-3">
             {docsConfig.mainNav?.map((item) => {
               return (
                 item.href && (
                   <MobileLink
                     key={item.href}
-                    href={item.href}
                     onOpenChange={setOpen}
+                    href={item.href}
                   >
                     {item.title}
+                    {item.label && (
+                      <span className="ml-2 rounded-md bg-[#adfa1d] px-1.5 py-0.5 text-xs leading-none text-[#000000] no-underline group-hover:no-underline">
+                        {item.label}
+                      </span>
+                    )}
                   </MobileLink>
                 )
               );
@@ -67,11 +85,16 @@ export function MobileNav() {
                       {!_item.disabled &&
                         (_item.href ? (
                           <MobileLink
-                            href={_item.href}
-                            onOpenChange={setOpen}
                             className="text-muted-foreground"
+                            onOpenChange={setOpen}
+                            href={_item.href}
                           >
                             {_item.title}
+                            {item.label && (
+                              <span className="ml-2 rounded-md bg-[#adfa1d] px-1.5 py-0.5 text-xs leading-none text-[#000000] no-underline group-hover:no-underline">
+                                {item.label}
+                              </span>
+                            )}
                           </MobileLink>
                         ) : (
                           _item.title
@@ -81,35 +104,36 @@ export function MobileNav() {
               </div>
             ))}
           </div>
-        </ScrollArea>
-      </SheetContent>
-    </Sheet>
+        </div>
+      </DrawerContent>
+    </Drawer>
   );
 }
 
 interface MobileLinkProps extends LinkProps {
-  onOpenChange?: (open: boolean) => void;
   children: React.ReactNode;
   className?: string;
+  onOpenChange?: (open: boolean) => void;
 }
 
 function MobileLink({
+  children,
+  className,
   href,
   onOpenChange,
-  className,
-  children,
   ...props
 }: MobileLinkProps) {
   const router = useRouter();
 
   return (
     <Link
-      href={href}
+      className={cn('text-base', className)}
       onClick={() => {
+        // eslint-disable-next-line @typescript-eslint/no-base-to-string
         router.push(href.toString());
         onOpenChange?.(false);
       }}
-      className={cn(className)}
+      href={href}
       {...props}
     >
       {children}

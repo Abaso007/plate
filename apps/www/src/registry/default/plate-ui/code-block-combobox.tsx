@@ -1,87 +1,133 @@
 'use client';
 
 import React, { useState } from 'react';
-import {
-  CODE_BLOCK_LANGUAGES,
-  CODE_BLOCK_LANGUAGES_POPULAR,
-  useCodeBlockCombobox,
-  useCodeBlockComboboxState,
-} from '@udecode/plate-code-block';
 
-import { cn } from '@/lib/utils';
-import { Icons } from '@/components/icons';
+import type { TCodeBlockElement } from '@udecode/plate-code-block';
+
+import { cn } from '@udecode/cn';
+import { useEditorRef, useElement, useReadOnly } from '@udecode/plate/react';
+import { Check } from 'lucide-react';
 
 import { Button } from './button';
 import {
   Command,
   CommandEmpty,
+  CommandGroup,
   CommandInput,
   CommandItem,
   CommandList,
 } from './command';
 import { Popover, PopoverContent, PopoverTrigger } from './popover';
 
-const languages: { value: string; label: string }[] = [
-  { value: 'text', label: 'Plain Text' },
-  ...Object.entries({
-    ...CODE_BLOCK_LANGUAGES_POPULAR,
-    ...CODE_BLOCK_LANGUAGES,
-  }).map(([key, val]) => ({
-    value: key,
-    label: val as string,
-  })),
+const languages: { label: string; value: string }[] = [
+  { label: 'Auto', value: 'auto' },
+  { label: 'Plain Text', value: 'plaintext' },
+  { label: 'Bash', value: 'bash' },
+  { label: 'C', value: 'c' },
+  { label: 'C++', value: 'cpp' },
+  { label: 'C#', value: 'csharp' },
+  { label: 'CSS', value: 'css' },
+  { label: 'Diff', value: 'diff' },
+  { label: 'Go', value: 'go' },
+  { label: 'GraphQL', value: 'graphql' },
+  { label: 'HTML', value: 'html' },
+  { label: 'Java', value: 'java' },
+  { label: 'JavaScript', value: 'javascript' },
+  { label: 'JSON', value: 'json' },
+  { label: 'JSX', value: 'jsx' },
+  { label: 'Kotlin', value: 'kotlin' },
+  { label: 'Less', value: 'less' },
+  { label: 'Lua', value: 'lua' },
+  { label: 'Makefile', value: 'makefile' },
+  { label: 'Markdown', value: 'markdown' },
+  { label: 'Objective-C', value: 'objectivec' },
+  { label: 'PHP', value: 'php' },
+  { label: 'Python', value: 'python' },
+  { label: 'R', value: 'r' },
+  { label: 'Ruby', value: 'ruby' },
+  { label: 'Rust', value: 'rust' },
+  { label: 'SCSS', value: 'scss' },
+  { label: 'Shell', value: 'shell' },
+  { label: 'SQL', value: 'sql' },
+  { label: 'Swift', value: 'swift' },
+  { label: 'TypeScript', value: 'typescript' },
+  { label: 'TSX', value: 'tsx' },
+  { label: 'XML', value: 'xml' },
+  { label: 'YAML', value: 'yaml' },
 ];
 
 export function CodeBlockCombobox() {
-  const state = useCodeBlockComboboxState();
-  const { commandItemProps } = useCodeBlockCombobox(state);
-
   const [open, setOpen] = useState(false);
+  const readOnly = useReadOnly();
+  const editor = useEditorRef();
+  const element = useElement<TCodeBlockElement>();
+  const value = element.lang ?? 'plaintext';
+  const [searchValue, setSearchValue] = React.useState('');
 
-  if (state.readOnly) return null;
+  const items = React.useMemo(
+    () =>
+      languages.filter(
+        (language) =>
+          !searchValue ||
+          language.label.toLowerCase().includes(searchValue.toLowerCase())
+      ),
+    [searchValue]
+  );
+
+  if (readOnly) return null;
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
-          variant="ghost"
-          role="combobox"
-          aria-expanded={open}
-          className="h-5 justify-between px-1 text-xs"
           size="xs"
+          variant="ghost"
+          className="h-6 justify-between text-muted-foreground gap-1 px-2 text-xs select-none"
+          aria-expanded={open}
+          role="combobox"
         >
-          {state.value
-            ? languages.find((language) => language.value === state.value)
-                ?.label
-            : 'Plain Text'}
-          <Icons.chevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          {languages.find((language) => language.value === value)?.label ??
+            'Plain Text'}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
-        <Command>
-          <CommandInput placeholder="Search language..." />
+      <PopoverContent
+        className="w-[200px] p-0"
+        onCloseAutoFocus={() => setSearchValue('')}
+      >
+        <Command shouldFilter={false}>
+          <CommandInput
+            className="h-9"
+            value={searchValue}
+            onValueChange={(value) => setSearchValue(value)}
+            placeholder="Search language..."
+          />
           <CommandEmpty>No language found.</CommandEmpty>
 
-          <CommandList>
-            {languages.map((language) => (
-              <CommandItem
-                key={language.value}
-                value={language.value}
-                className="cursor-pointer"
-                onSelect={(_value) => {
-                  commandItemProps.onSelect(_value);
-                  setOpen(false);
-                }}
-              >
-                <Icons.check
-                  className={cn(
-                    'mr-2 h-4 w-4',
-                    state.value === language.value ? 'opacity-100' : 'opacity-0'
-                  )}
-                />
-                {language.label}
-              </CommandItem>
-            ))}
+          <CommandList className="h-[344px] overflow-y-auto">
+            <CommandGroup>
+              {items.map((language) => (
+                <CommandItem
+                  key={language.value}
+                  className="cursor-pointer"
+                  value={language.value}
+                  onSelect={(value) => {
+                    editor.tf.setNodes<TCodeBlockElement>(
+                      { lang: value },
+                      { at: element }
+                    );
+                    setSearchValue(value);
+                    setOpen(false);
+                  }}
+                >
+                  <Check
+                    className={cn(
+                      value === language.value ? 'opacity-100' : 'opacity-0'
+                    )}
+                  />
+                  {language.label}
+                </CommandItem>
+              ))}
+            </CommandGroup>
           </CommandList>
         </Command>
       </PopoverContent>

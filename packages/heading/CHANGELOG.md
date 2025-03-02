@@ -1,5 +1,227 @@
 # @udecode/plate-heading
 
+## 44.0.0
+
+## 43.0.0
+
+## 42.2.2
+
+### Patch Changes
+
+- [#4002](https://github.com/udecode/plate/pull/4002) by [@zbeyens](https://github.com/zbeyens) – Fix parsers to use custom node type
+
+## 42.0.0
+
+## 41.0.0
+
+## 40.2.6
+
+### Patch Changes
+
+- [`430d362b168055d07d618745b6aefb42aa8d99e5`](https://github.com/udecode/plate/commit/430d362b168055d07d618745b6aefb42aa8d99e5) by [@felixfeng33](https://github.com/felixfeng33) – Fix scrolling container error.
+
+## 40.0.2
+
+### Patch Changes
+
+- [#3761](https://github.com/udecode/plate/pull/3761) by [@zbeyens](https://github.com/zbeyens) – Fix scroll ref
+
+## 40.0.1
+
+### Patch Changes
+
+- [#3759](https://github.com/udecode/plate/pull/3759) by [@zbeyens](https://github.com/zbeyens) –
+  - Use `useEditorScrollRef` instead of `useEditorContainerRef`
+
+## 40.0.0
+
+### Major Changes
+
+- [#3744](https://github.com/udecode/plate/pull/3744) by [@zbeyens](https://github.com/zbeyens) –
+  - Remove `scrollContainerSelector` option in favor of `useEditorContainerRef`
+
+## 39.0.0
+
+## 38.0.12
+
+### Patch Changes
+
+- [#3586](https://github.com/udecode/plate/pull/3586) by [@felixfeng33](https://github.com/felixfeng33) – Remove useless props move config from `useTocElementState` to TocPlugin `options`
+
+## 38.0.1
+
+### Patch Changes
+
+- [#3526](https://github.com/udecode/plate/pull/3526) by [@zbeyens](https://github.com/zbeyens) – Prefix base plugin with `Base`
+
+## 38.0.0
+
+## 37.0.0
+
+### Major Changes
+
+- [#3420](https://github.com/udecode/plate/pull/3420) by [@zbeyens](https://github.com/zbeyens) –
+  - `createHeadingPlugin` -> `HeadingPlugin`
+  - Replace `ELEMENT_H1` with `HEADING_KEYS.H1`
+  - Replace `KEYS_HEADING` with `HEADING_LEVELS`
+
+## 36.0.12
+
+### Patch Changes
+
+- [#3377](https://github.com/udecode/plate/pull/3377) by [@natamox](https://github.com/natamox) – Make the heading item in the middle when there is a scroll bar
+
+## 36.0.9
+
+### Patch Changes
+
+- [#3369](https://github.com/udecode/plate/pull/3369) by [@felixfeng33](https://github.com/felixfeng33) – Fix:When there is a fixed container, scrolling is not work.
+
+## 36.0.5
+
+### Patch Changes
+
+- [#3352](https://github.com/udecode/plate/pull/3352) by [@felixfeng33](https://github.com/felixfeng33) – Prevent circular references caused by brl incorrectly exporting getHeadingList.
+
+## 36.0.4
+
+### Patch Changes
+
+- [#3350](https://github.com/udecode/plate/pull/3350) by [@natamox](https://github.com/natamox) – Expose toc plugin queryHeading fuction, this allows to customize the heading I need
+
+## 36.0.0
+
+## 34.0.7
+
+### Patch Changes
+
+- [#3273](https://github.com/udecode/plate/pull/3273) by [@natamox](https://github.com/natamox) – Fix closure issue,incorrect height calculation and expose behavior parameters
+
+## 34.0.0
+
+### Minor Changes
+
+- [#3241](https://github.com/udecode/plate/pull/3241) by [@felixfeng33](https://github.com/felixfeng33) – Add ToC plugin and sidebar
+
+## 33.0.3
+
+### Patch Changes
+
+- [#3194](https://github.com/udecode/plate/pull/3194) by [@KorovinQuantori](https://github.com/KorovinQuantori) – Export plugin keys for easier access plugin options by key
+
+## 33.0.1
+
+### Patch Changes
+
+- [#3183](https://github.com/udecode/plate/pull/3183) by [@KorovinQuantori](https://github.com/KorovinQuantori) – Fix regression: heading hotkeys
+
+## 33.0.0
+
+## 32.0.0
+
+### Minor Changes
+
+- [#3162](https://github.com/udecode/plate/pull/3162) by [@emilienbidet](https://github.com/emilienbidet) – ### Changes
+
+  - Modified `createHeadingPlugin` function to allow granular selection of heading levels.
+  - Added support for retaining the old behavior of generating plugins for all heading levels up to a maximum level.
+  - Type the heading levels props
+
+  ### Details
+
+  - The `createHeadingPlugin` function has been updated to accept an array of specific heading levels to enable, allowing for granular selection of heading levels. This provides more flexibility in choosing which heading levels to support within the editor.
+  - The function now supports retaining the old behavior of generating plugins for all heading levels up to a maximum level if desired. This ensures backward compatibility with existing implementations that rely on the previous behavior.
+
+  ### How to Use
+
+  - To use the granular selection feature, pass an array of heading levels to the `createHeadingPlugin` function when initializing it. For example:
+
+  ```ts
+  const headingPlugin = createHeadingPlugin({
+    levels: [1, 2, 3], // Enable heading levels 1, 2, and 3
+  });
+  ```
+
+  And the previous behaviour is still working:
+
+  ```ts
+  const headingPlugin = createHeadingPlugin({
+    levels: 6, // Enable heading levels 1, 2, 3, 4, 5 and 6
+  });
+  ```
+
+## 31.0.0
+
+## 30.5.3
+
+### Patch Changes
+
+- [`4cbed7159`](https://github.com/udecode/plate/commit/4cbed7159d51f7427051686e45bcf2a8899aeede) by [@zbeyens](https://github.com/zbeyens) – Move `@udecode/plate-common` to peerDeps to fix a bug when multiple instances were installed
+
+## 30.5.2
+
+### Patch Changes
+
+- [#2961](https://github.com/udecode/plate/pull/2961) by [@zbeyens](https://github.com/zbeyens) – Move `@udecode/plate-common` to peerDeps to fix a bug when multiple instances were installed
+
+## 30.4.5
+
+## 30.1.2
+
+## 30.0.0
+
+## 29.1.0
+
+## 29.0.1
+
+## 29.0.0
+
+## 28.0.0
+
+## 27.0.3
+
+## 27.0.0
+
+## 25.0.1
+
+## 25.0.0
+
+## 24.5.2
+
+## 24.4.0
+
+### Minor Changes
+
+- [#2675](https://github.com/udecode/plate/pull/2675) by [@zbeyens](https://github.com/zbeyens) – Support slate-react 0.99.0
+
+## 24.3.6
+
+## 24.3.5
+
+## 24.3.2
+
+## 24.3.1
+
+## 24.3.0
+
+## 24.2.0
+
+## 24.0.2
+
+## 24.0.1
+
+## 24.0.0
+
+## 23.7.4
+
+## 23.7.0
+
+## 23.6.0
+
+## 23.3.1
+
+## 23.3.0
+
 ## 22.0.2
 
 ## 22.0.1
