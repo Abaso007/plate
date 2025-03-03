@@ -1,26 +1,16 @@
-import { CSSProperties } from 'react';
-import { UnknownObject } from '@udecode/plate-common';
-import { Range } from 'slate';
+import type React from 'react';
 
-export type SelectionRect = {
-  width: number;
-  height: number;
-
-  top: number;
-  left: number;
-};
+import type { TRange, UnknownObject } from '@udecode/plate';
 
 export type CaretPosition = {
   height: number;
-
-  top: number;
   left: number;
+  top: number;
 };
 
-export type CursorState<TCursorData extends UnknownObject = UnknownObject> = {
-  key?: any;
-  selection: Range | null;
-  data?: TCursorData;
+export type CursorData = {
+  selectionStyle?: React.CSSProperties;
+  style?: React.CSSProperties;
 };
 
 export interface CursorOverlayState<TCursorData extends Record<string, unknown>>
@@ -29,7 +19,15 @@ export interface CursorOverlayState<TCursorData extends Record<string, unknown>>
   selectionRects: SelectionRect[];
 }
 
-export type CursorData = {
-  style?: CSSProperties;
-  selectionStyle?: CSSProperties;
+export type CursorState<TCursorData extends UnknownObject = UnknownObject> = {
+  selection: TRange | null;
+  key?: any;
+  data?: TCursorData;
+};
+
+export type SelectionRect = {
+  height: number;
+  left: number;
+  top: number;
+  width: number;
 };

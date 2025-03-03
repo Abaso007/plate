@@ -1,18 +1,20 @@
-/** @jsx jsx */
+/** @jsx jsxt */
 
-import { createPlateEditor } from '@udecode/plate-common';
-import { ELEMENT_H2 } from '@udecode/plate-heading';
-import { jsx } from '@udecode/plate-test-utils';
+import { createEditor, createSlateEditor } from '@udecode/plate';
+import { HEADING_KEYS } from '@udecode/plate-heading';
+import { jsxt } from '@udecode/plate-test-utils';
 
-import { createNormalizeTypesPlugin } from '../../../createNormalizeTypesPlugin';
+import { NormalizeTypesPlugin } from '../../../lib/NormalizeTypesPlugin';
 
-jsx;
+jsxt;
 
-const input = (
-  <editor>
-    <hh1>test</hh1>
-  </editor>
-) as any;
+const input = createEditor(
+  (
+    <editor>
+      <hh1>test</hh1>
+    </editor>
+  ) as any
+);
 
 const output = (
   <editor>
@@ -24,18 +26,19 @@ const output = (
 ) as any;
 
 it('should be', () => {
-  const editor = createPlateEditor({
-    editor: input,
+  const editor = createSlateEditor({
     plugins: [
-      createNormalizeTypesPlugin({
+      NormalizeTypesPlugin.configure({
         options: {
-          rules: [{ path: [1], strictType: ELEMENT_H2 }],
+          rules: [{ path: [1], strictType: HEADING_KEYS.h2 }],
         },
       }),
     ],
+    selection: input.selection,
+    value: input.children,
   });
 
-  editor.normalizeNode([input, []]);
+  editor.tf.normalizeNode([input, []]);
 
-  expect(input.children).toEqual(output.children);
+  expect(editor.children).toEqual(output.children);
 });

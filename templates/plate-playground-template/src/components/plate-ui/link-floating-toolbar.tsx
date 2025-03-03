@@ -1,78 +1,114 @@
+'use client';
+
 import React from 'react';
-import { TEditableProps } from '@udecode/plate-common';
+
+import { cn } from '@udecode/cn';
 import {
+  type UseVirtualFloatingOptions,
+  flip,
+  offset,
+} from '@udecode/plate-floating';
+import {
+  type LinkFloatingToolbarState,
   FloatingLinkUrlInput,
   LinkOpenButton,
   useFloatingLinkEdit,
   useFloatingLinkEditState,
   useFloatingLinkInsert,
   useFloatingLinkInsertState,
-  useFloatingLinkSelectors,
-} from '@udecode/plate-link';
-
-import { cn } from '@/lib/utils';
-import { Icons } from '@/components/icons';
+} from '@udecode/plate-link/react';
+import { useFormInputProps } from '@udecode/plate/react';
+import { ExternalLink, Link, Text, Unlink } from 'lucide-react';
 
 import { buttonVariants } from './button';
 import { inputVariants } from './input';
 import { popoverVariants } from './popover';
 import { Separator } from './separator';
 
-export function LinkFloatingToolbar({ readOnly }: TEditableProps) {
-  const isEditing = useFloatingLinkSelectors().isEditing();
+const floatingOptions: UseVirtualFloatingOptions = {
+  middleware: [
+    offset(12),
+    flip({
+      fallbackPlacements: ['bottom-end', 'top-start', 'top-end'],
+      padding: 12,
+    }),
+  ],
+  placement: 'bottom-start',
+};
 
-  const state = useFloatingLinkInsertState();
+export interface LinkFloatingToolbarProps {
+  state?: LinkFloatingToolbarState;
+}
+
+export function LinkFloatingToolbar({ state }: LinkFloatingToolbarProps) {
+  const insertState = useFloatingLinkInsertState({
+    ...state,
+    floatingOptions: {
+      ...floatingOptions,
+      ...state?.floatingOptions,
+    },
+  });
   const {
+    hidden,
     props: insertProps,
     ref: insertRef,
     textInputProps,
-  } = useFloatingLinkInsert(state);
+  } = useFloatingLinkInsert(insertState);
 
-  const editState = useFloatingLinkEditState();
+  const editState = useFloatingLinkEditState({
+    ...state,
+    floatingOptions: {
+      ...floatingOptions,
+      ...state?.floatingOptions,
+    },
+  });
   const {
+    editButtonProps,
     props: editProps,
     ref: editRef,
-    editButtonProps,
     unlinkButtonProps,
   } = useFloatingLinkEdit(editState);
+  const inputProps = useFormInputProps({
+    preventDefaultOnEnterKeydown: true,
+  });
 
-  if (readOnly) return null;
+  if (hidden) return null;
 
   const input = (
-    <div className="flex w-[330px] flex-col">
+    <div className="flex w-[330px] flex-col" {...inputProps}>
       <div className="flex items-center">
-        <div className="flex items-center pl-3 text-muted-foreground">
-          <Icons.link className="h-4 w-4" />
+        <div className="flex items-center pr-1 pl-2 text-muted-foreground">
+          <Link className="size-4" />
         </div>
 
         <FloatingLinkUrlInput
-          className={inputVariants({ variant: 'ghost', h: 'sm' })}
+          className={inputVariants({ h: 'sm', variant: 'ghost' })}
           placeholder="Paste link"
+          data-plate-focus
         />
       </div>
-
-      <Separator />
-
+      <Separator className="my-1" />
       <div className="flex items-center">
-        <div className="flex items-center pl-3 text-muted-foreground">
-          <Icons.text className="h-4 w-4" />
+        <div className="flex items-center pr-1 pl-2 text-muted-foreground">
+          <Text className="size-4" />
         </div>
         <input
-          className={inputVariants({ variant: 'ghost', h: 'sm' })}
+          className={inputVariants({ h: 'sm', variant: 'ghost' })}
           placeholder="Text to display"
+          data-plate-focus
           {...textInputProps}
         />
       </div>
     </div>
   );
 
-  const editContent = isEditing ? (
+  const editContent = editState.isEditing ? (
     input
   ) : (
-    <div className="box-content flex h-9 items-center gap-1">
+    <div className="box-content flex items-center">
       <button
+        className={buttonVariants({ size: 'sm', variant: 'ghost' })}
         type="button"
-        className={buttonVariants({ variant: 'ghost', size: 'sm' })}
         {...editButtonProps}
       >
         Edit link
@@ -82,24 +118,24 @@ export function LinkFloatingToolbar({ readOnly }: TEditableProps) {
 
       <LinkOpenButton
         className={buttonVariants({
+          size: 'icon',
           variant: 'ghost',
-          size: 'sms',
         })}
       >
-        <Icons.externalLink width={18} />
+        <ExternalLink width={18} />
       </LinkOpenButton>
 
       <Separator orientation="vertical" />
 
       <button
-        type="button"
         className={buttonVariants({
+          size: 'icon',
           variant: 'ghost',
-          size: 'sms',
         })}
+        type="button"
         {...unlinkButtonProps}
       >
-        <Icons.unlink width={18} />
+        <Unlink width={18} />
       </button>
     </div>
   );

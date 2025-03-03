@@ -1,18 +1,34 @@
 'use client';
 
 import React from 'react';
-import { useCommentAddButton } from '@udecode/plate-comments';
 
-import { Icons } from '@/components/icons';
+import { getDraftCommentKey } from '@udecode/plate-comments';
+import { useEditorPlugin } from '@udecode/plate/react';
+import { MessageSquareTextIcon } from 'lucide-react';
+
+import { commentsPlugin } from '@/components/editor/plugins/comments-plugin';
 
 import { ToolbarButton } from './toolbar';
 
 export function CommentToolbarButton() {
-  const { props } = useCommentAddButton();
+  const { editor, setOption, tf } = useEditorPlugin(commentsPlugin);
+
+  const onCommentToolbarButton = React.useCallback(() => {
+    if (!editor.selection) return;
+
+    tf.comment.setDraft();
+    editor.tf.collapse();
+    setOption('activeId', getDraftCommentKey());
+    setOption('commentingBlock', editor.selection.focus.path.slice(0, 1));
+  }, [editor.selection, editor.tf, setOption, tf.comment]);
 
   return (
-    <ToolbarButton tooltip="Comment (⌘+⇧+M)" {...props}>
-      <Icons.commentAdd />
+    <ToolbarButton
+      onClick={onCommentToolbarButton}
+      data-plate-prevent-overlay
+      tooltip="Comment"
+    >
+      <MessageSquareTextIcon />
     </ToolbarButton>
   );
 }
